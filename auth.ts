@@ -1,24 +1,38 @@
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { NextResponse } from "next/server";
-import { prisma } from "./lib/db";
-
-const ONBOARDING_PATH = "/onboarding";
-const DASHBOARD_PATH = "/dashboard";
+import Credentials from "next-auth/providers/credentials";
 
 const PUBLIC_PATHS = ["/login", "/onboarding"];
 const AUTH_API_PREFIX = "/api/auth";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  secret: process.env.AUTH_SECRET,
   trustHost: true,
+
   providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID!,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        // TODO: tady bude DB kontrola
+        if (
+          credentials?.email === "admin@admin.com" &&
+          credentials?.password === "admin"
+        ) {
+          return {
+            id: "1",
+            name: "Admin",
+            email: "admin@admin.com",
+          };
+        }
+
+        return null;
+      },
     }),
   ],
+
   callbacks: {
     authorized({ request, auth }) {
       const { pathname } = request.nextUrl;
@@ -26,40 +40,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (pathname.startsWith(AUTH_API_PREFIX)) return true;
       if (PUBLIC_PATHS.includes(pathname)) return true;
 
-      if (!auth?.user) return false;
-
-      if (!auth.user.companyId) {
-        return NextResponse.redirect(new URL(ONBOARDING_PATH, request.url));
-      }
-
-      return true;
+      return !!auth?.user;
     },
-    async redirect({ url, baseUrl }) {
-      const resolvedUrl = url.startsWith("/") ? `${baseUrl}${url}` : url;
-      if (resolvedUrl.startsWith(baseUrl)) {
-        return resolvedUrl;
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.companyId = null;
+        token.role = "MEMBER";
       }
-      return baseUrl + DASHBOARD_PATH;
+      return token;
     },
-    async session({ session, user }) {
+    async session({ session, token }) {
       if (session.user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
-          select: { companyId: true, role: true },
-        });
-        session.user.id = user.id;
-        session.user.companyId = dbUser?.companyId ?? null;
-        session.user.role = dbUser?.role ?? "MEMBER";
+        session.user.id = token.id as string;
+        session.user.companyId = (token.companyId as string | null) ?? null;
+        session.user.role = (token.role as "ADMIN" | "MEMBER") ?? "MEMBER";
       }
       return session;
     },
   },
+
+  session: {
+    strategy: "jwt",
+  },
+
   pages: {
     signIn: "/login",
-  },
-  session: {
-    strategy: "database",
-    maxAge: 30 * 24 * 60 * 60,
-    updateAge: 24 * 60 * 60,
   },
 });
