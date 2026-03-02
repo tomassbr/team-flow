@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id                  String   @id @default(uuid())
+  name                String
+  plan                Plan     @default(FREE)
+  maxDesks            Int?
+  maxUsers            Int?
+  primaryColor        String?
+  logoUrl             String?
+  checkInLimitMinutes Int      @default(20)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  users        User[]
+  desks        Desk[]
+  reservations Reservation[]
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  emailVerified DateTime? @map("email_verified")
+  name          String?
+  image         String?
+  role          Role      @default(MEMBER)
+  companyId     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  company      Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  accounts     Account[]
+  sessions     Session[]
+  reservations Reservation[]
+}
+
+// Auth.js Prisma adapter models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model Desk {
+  id        String   @id @default(uuid())
+  name      String
+  companyId String
+  qrToken   String?  @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reservations  Reservation[]
+}
+
+model Reservation {
+  id        String    @id @default(uuid())
+  companyId String
+  userId    String
+  deskId    String
+  date      DateTime  @db.Date
+  status    ReservationStatus @default(RESERVED)
+  checkInAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  desk    Desk    @relation(fields: [deskId], references: [id], onDelete: Cascade)
+
+  @@unique([deskId, date])
+  @@unique([userId, date])
+
+  @@index([companyId])
+  @@index([companyId, date])
+  @@index([companyId, status])
+}
+
+enum ReservationStatus {
+  RESERVED
+  CONFIRMED
+  RELEASED
+}
