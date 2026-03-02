@@ -34,33 +34,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       return true;
     },
-    async signIn({ user }) {
-      if (!user.id || !user.email) return false;
-
-      const dbUser = await prisma.user.findUnique({
-        where: { id: user.id },
-        select: { companyId: true },
-      });
-
-      if (!dbUser) return true;
-
-      if (dbUser.companyId) return true;
-
-      const companyCount = await prisma.company.count();
-      if (companyCount === 0) return ONBOARDING_PATH;
-
-      const company = await prisma.company.findFirst({
-        select: { id: true },
-      });
-      if (company) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { companyId: company.id },
-        });
-      }
-
-      return true;
-    },
     async redirect({ url, baseUrl }) {
       const resolvedUrl = url.startsWith("/") ? `${baseUrl}${url}` : url;
       if (resolvedUrl.startsWith(baseUrl)) {
@@ -88,25 +61,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "database",
     maxAge: 30 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
-  },
-  events: {
-    async createUser({ user }) {
-      const companyCount = await prisma.company.count();
-
-      if (companyCount === 0) {
-        return;
-      }
-
-      const company = await prisma.company.findFirst({
-        select: { id: true },
-      });
-
-      if (company && user.id) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { companyId: company.id },
-        });
-      }
-    },
   },
 });
