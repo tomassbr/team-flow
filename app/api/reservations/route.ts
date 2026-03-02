@@ -7,8 +7,45 @@ function parseDate(value: unknown): Date | null {
   return isNaN(date.getTime()) ? null : date;
 }
 
-export async function GET() {
-  return Response.json({});
+function toStartOfDay(date: Date): Date {
+  const d = new Date(date);
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+}
+
+export async function GET(request: Request) {
+  const session = await requireAuth();
+  if (session instanceof Response) return session;
+  const companySession = await requireCompany(session);
+  if (companySession instanceof Response) return companySession;
+
+  const companyId = companySession.user.companyId!;
+
+  const { searchParams } = new URL(request.url);
+  const dateParam = searchParams.get("date");
+  const date = parseDate(dateParam);
+
+  if (!date) {
+    return Response.json(
+      { error: "date query parameter is required (YYYY-MM-DD)" },
+      { status: 400 }
+    );
+  }
+
+  const startOfDay = toStartOfDay(date);
+
+  const [reservations, desks] = await Promise.all([
+    prisma.reservation.findMany({
+      where: { companyId, date: startOfDay },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.desk.findMany({
+      where: { companyId },
+      orderBy: { createdAt: "asc" },
+    }),
+  ]);
+
+  return Response.json({ reservations, desks });
 }
 
 export async function POST(request: Request) {
@@ -50,8 +87,7 @@ export async function POST(request: Request) {
         throw new ReservationError("Desk not found", 404);
       }
 
-      const startOfDay = new Date(date);
-      startOfDay.setUTCHours(0, 0, 0, 0);
+      const startOfDay = toStartOfDay(date);
 
       const existingUserReservation = await tx.reservation.findUnique({
         where: {
