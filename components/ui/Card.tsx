@@ -1,4 +1,16 @@
-// TODO: Implement Card component
-export function Card() {
-  return null;
+import type { ReactNode } from "react";
+
+interface CardProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function Card({ children, className = "" }: CardProps) {
+  return (
+    <div
+      className={`rounded-lg border border-border bg-surface p-4 ${className}`}
+    >
+      {children}
+    </div>
+  );
 }
