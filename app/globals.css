@@ -1,26 +1,45 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "../styles/tokens.css";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Semantic colors — use these in components, never hex */
+  --color-background: var(--token-background);
+  --color-foreground: var(--token-foreground);
+  --color-foreground-muted: var(--token-foreground-muted);
+  --color-foreground-subtle: var(--token-foreground-subtle);
+  --color-primary: var(--token-primary);
+  --color-primary-foreground: var(--token-primary-foreground);
+  --color-secondary: var(--token-secondary);
+  --color-secondary-foreground: var(--token-secondary-foreground);
+  --color-border: var(--token-border);
+  --color-border-muted: var(--token-border-muted);
+  --color-success: var(--token-success);
+  --color-error: var(--token-error);
+  --color-warning: var(--token-warning);
+  --color-surface: var(--token-surface);
+  --color-background-elevated: var(--token-background-elevated);
+  --color-input-background: var(--token-input-background);
+  --color-input-border: var(--token-input-border);
+
+  /* Radius */
+  --radius-sm: var(--token-radius-sm);
+  --radius-md: var(--token-radius-md);
+  --radius-lg: var(--token-radius-lg);
+  --radius-full: var(--token-radius-full);
+
+  /* Spacing */
+  --spacing-token-xs: var(--token-spacing-xs);
+  --spacing-token-sm: var(--token-spacing-sm);
+  --spacing-token-md: var(--token-spacing-md);
+  --spacing-token-lg: var(--token-spacing-lg);
+  --spacing-token-xl: var(--token-spacing-xl);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--token-background);
+  color: var(--token-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
