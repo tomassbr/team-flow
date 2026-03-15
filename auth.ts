@@ -5,7 +5,11 @@ const PUBLIC_PATHS = ["/login", "/onboarding"];
 const AUTH_API_PREFIX = "/api/auth";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  secret: process.env.AUTH_SECRET,
+  secret:
+    process.env.AUTH_SECRET ||
+    (process.env.NODE_ENV === "development"
+      ? "dev-secret-min-32-chars-for-auth-js"
+      : undefined),
   trustHost: true,
 
   providers: [
