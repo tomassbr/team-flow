@@ -2,37 +2,21 @@
 @import "../styles/tokens.css";
 
 @theme inline {
-  /* Semantic colors — use these in components, never hex */
+  /* Semantic colors — map to tokens.css */
   --color-background: var(--token-background);
-  --color-foreground: var(--token-foreground);
-  --color-foreground-muted: var(--token-foreground-muted);
-  --color-foreground-subtle: var(--token-foreground-subtle);
-  --color-primary: var(--token-primary);
-  --color-primary-foreground: var(--token-primary-foreground);
-  --color-secondary: var(--token-secondary);
-  --color-secondary-foreground: var(--token-secondary-foreground);
-  --color-border: var(--token-border);
-  --color-border-muted: var(--token-border-muted);
-  --color-success: var(--token-success);
-  --color-error: var(--token-error);
-  --color-warning: var(--token-warning);
-  --color-surface: var(--token-surface);
-  --color-background-elevated: var(--token-background-elevated);
-  --color-input-background: var(--token-input-background);
-  --color-input-border: var(--token-input-border);
+  --color-foreground: var(--token-text-primary);
+  --color-surface: var(--token-surface-1);
+  --color-success: var(--token-status-success);
+  --color-error: var(--token-status-error);
+  --color-warning: var(--token-status-warning);
+  --color-border: var(--token-border-subtle);
+  --color-accent: var(--token-accent-primary);
 
   /* Radius */
-  --radius-sm: var(--token-radius-sm);
-  --radius-md: var(--token-radius-md);
-  --radius-lg: var(--token-radius-lg);
+  --radius-sm: var(--token-radius-12);
+  --radius-md: var(--token-radius-16);
+  --radius-lg: var(--token-radius-20);
   --radius-full: var(--token-radius-full);
-
-  /* Spacing */
-  --spacing-token-xs: var(--token-spacing-xs);
-  --spacing-token-sm: var(--token-spacing-sm);
-  --spacing-token-md: var(--token-spacing-md);
-  --spacing-token-lg: var(--token-spacing-lg);
-  --spacing-token-xl: var(--token-spacing-xl);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -40,6 +24,6 @@
 
 body {
   background: var(--token-background);
-  color: var(--token-foreground);
+  color: var(--token-text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
