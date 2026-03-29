@@ -1,60 +1,69 @@
 /**
  * Design token layer — synced from Figma variables (LIGHT ONLY).
+ * Source of truth: Figma / Smart Office / Style guide / Section - 3) JSON EXPORT
  * Components must NOT use hex colors directly. Use token variables only.
- * Source: token JSON ($value / $type).
  */
 
- :root {
-  /* Backgrounds */
-  --token-background: #F3F5F9;            /* color/bg/base */
-  --token-background-canvas: #F3F5F9;     /* color/bg/canvas */
+:root {
+  /* ─── Backgrounds ────────────────────────────────────────── */
+  --token-background: #F3F5F9;              /* color/bg/base */
+  --token-background-canvas: #F3F5F9;       /* color/bg/canvas */
 
-  /* Surfaces */
-  --token-surface-1: #FFFFFF;             /* color/surface/level1 */
-  --token-surface-2: #F8FAFC;             /* color/surface/level2 */
+  /* ─── Surfaces ───────────────────────────────────────────── */
+  --token-surface-1: #FFFFFF;               /* color/surface/level1 */
+  --token-surface-2: #F8FAFC;               /* color/surface/level2 */
   --token-surface-glass: rgba(241, 245, 249, 0.8); /* color/surface/glassTint */
+  --token-surface-elevated: #EEF4FE;        /* color/surface/elevated — Card/Elevated (Booked) */
 
-  /* Text */
-  --token-text-primary: #0F172A;          /* color/text/primary */
-  --token-text-secondary: #475569;        /* color/text/secondary */
-  --token-text-muted: #64748B;            /* color/text/muted */
-  --token-text-on-accent: #FFFFFF;        /* color/text/onAccent */
+  /* ─── Text ───────────────────────────────────────────────── */
+  --token-text-primary: #0F172A;            /* color/text/primary */
+  --token-text-secondary: #475569;          /* color/text/secondary */
+  --token-text-muted: #64748B;              /* color/text/muted */
+  --token-text-on-accent: #FFFFFF;          /* color/text/onAccent */
 
-  /* Borders */
-  --token-border-subtle: #F1F5F9;         /* color/border/subtle */
-  --token-border-strong: #CBD5E1;         /* color/border/strong */
+  /* ─── Borders ────────────────────────────────────────────── */
+  --token-border-subtle: #F1F5F9;           /* color/border/subtle */
+  --token-border-strong: #CBD5E1;           /* color/border/strong */
 
-  /* Accents */
-  --token-accent-primary: #0A1024;        /* color/accent/primary */
-  --token-accent-secondary: #06B6D4;      /* color/accent/secondary */
+  /* ─── Accents ────────────────────────────────────────────── */
+  --token-accent-primary: #6366F1;          /* color/accent/primary — indigo */
+  --token-accent-secondary: #06B6D4;        /* color/accent/secondary — cyan */
 
-  /* Status */
+  /* ─── Button ─────────────────────────────────────────────── */
+  --token-button-primary: #0F172A;          /* color/button/primary — dark navy */
+
+  /* ─── Status ─────────────────────────────────────────────── */
   --token-status-success: #10B981;
   --token-status-success-bg: rgba(16, 185, 129, 0.15);
-  --token-status-info: #3B82F6;
-  --token-accent-secondary-bg: rgba(6, 182, 212, 0.15);
   --token-status-success-border: rgba(16, 185, 129, 0.3);
-  --token-accent-secondary-border: rgba(6, 182, 212, 0.3);
+  --token-status-info: #3B82F6;
   --token-status-warning: #F59E0B;
   --token-status-error: #EF4444;
+  --token-accent-secondary-bg: rgba(6, 182, 212, 0.15);
+  --token-accent-secondary-border: rgba(6, 182, 212, 0.3);
+  --token-accent-primary-bg: rgba(99, 102, 241, 0.1);
+  --token-accent-primary-border: rgba(99, 102, 241, 0.2);
 
-  /* Spacing (rem, from JSON) */
+  /* ─── Spacing ────────────────────────────────────────────── */
   --token-space-4: 0.25rem;
   --token-space-8: 0.5rem;
   --token-space-12: 0.75rem;
   --token-space-16: 1rem;
+  --token-space-20: 1.25rem;
   --token-space-24: 1.5rem;
   --token-space-32: 2rem;
   --token-space-40: 2.5rem;
 
-  /* Radius (rem, from JSON) */
+  /* ─── Radius ─────────────────────────────────────────────── */
   --token-radius-12: 0.75rem;
   --token-radius-16: 1rem;
   --token-radius-20: 1.25rem;
   --token-radius-24: 1.5rem;
+  --token-radius-28: 1.75rem;
+  --token-radius-32: 2rem;
   --token-radius-full: 9999px;
 
-  /* Typography (design.md §5.1) */
+  /* ─── Typography ─────────────────────────────────────────── */
   --token-type-display: 1.875rem;
   --token-type-h1: 1.5rem;
   --token-type-h2: 1.25rem;
@@ -65,24 +74,32 @@
   --token-type-weight-medium: 500;
   --token-type-tracking: -0.025em;
 
-  /* Booked card surface (gradient/brand tint) */
-  --token-surface-booked: linear-gradient(
-    135deg,
-    rgba(199, 210, 254, 0.4) 0%,
-    rgba(207, 250, 254, 0.3) 50%,
-    rgba(255, 255, 255, 0.2) 100%
-  );
-
-  /* Shadows (from JSON; CSS-compatible) */
+  /* ─── Shadows ────────────────────────────────────────────── */
   --token-shadow-e1: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --token-shadow-e2: 0 2px 12px 0 rgba(0, 0, 0, 0.02);
   --token-shadow-e3: 0 8px 40px 0 rgba(0, 0, 0, 0.03);
+  /* gradient glow: implemented via blurred gradient layer in Button component */
 
-  /* Gradient (string token; use in CSS where supported) */
+  /* ─── Gradients ──────────────────────────────────────────── */
   --token-gradient-brand: linear-gradient(
     to right,
     rgba(37, 99, 235, 0.4),
     rgba(34, 211, 238, 0.4),
     rgba(79, 70, 229, 0.4)
   );
+  --token-gradient-item: linear-gradient(
+    90deg,
+    rgba(199, 210, 254, 0.6) 0%,
+    rgba(207, 250, 254, 0.4) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  --token-gradient-dashboard: radial-gradient(
+    circle,
+    #FFFFFF 0%,
+    #F1F5F9 65%,
+    #E2E8F0 100%
+  );
+
+  /* ─── Legacy alias (surface/booked = gradient/item) ─────── */
+  --token-surface-booked: var(--token-gradient-item);
 }

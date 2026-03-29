@@ -1,5 +1,6 @@
 /**
  * Design token configuration (LIGHT ONLY).
+ * Source of truth: styles/tokens.css — synced from Figma.
  * Components must NOT use hex colors directly — use token names only.
  */
 export const tokens = {
@@ -12,6 +13,7 @@ export const tokens = {
       level1: "var(--token-surface-1)",
       level2: "var(--token-surface-2)",
       glassTint: "var(--token-surface-glass)",
+      elevated: "var(--token-surface-elevated)",
     },
     text: {
       primary: "var(--token-text-primary)",
@@ -25,14 +27,34 @@ export const tokens = {
     },
     accent: {
       primary: "var(--token-accent-primary)",
+      primaryBg: "var(--token-accent-primary-bg)",
+      primaryBorder: "var(--token-accent-primary-border)",
       secondary: "var(--token-accent-secondary)",
+      secondaryBg: "var(--token-accent-secondary-bg)",
+      secondaryBorder: "var(--token-accent-secondary-border)",
+    },
+    button: {
+      primary: "var(--token-button-primary)",
     },
     status: {
       success: "var(--token-status-success)",
+      successBg: "var(--token-status-success-bg)",
+      successBorder: "var(--token-status-success-border)",
       info: "var(--token-status-info)",
       warning: "var(--token-status-warning)",
       error: "var(--token-status-error)",
     },
+  },
+
+  space: {
+    s4: "var(--token-space-4)",
+    s8: "var(--token-space-8)",
+    s12: "var(--token-space-12)",
+    s16: "var(--token-space-16)",
+    s20: "var(--token-space-20)",
+    s24: "var(--token-space-24)",
+    s32: "var(--token-space-32)",
+    s40: "var(--token-space-40)",
   },
 
   radius: {
@@ -40,6 +62,8 @@ export const tokens = {
     r16: "var(--token-radius-16)",
     r20: "var(--token-radius-20)",
     r24: "var(--token-radius-24)",
+    r28: "var(--token-radius-28)",
+    r32: "var(--token-radius-32)",
     full: "var(--token-radius-full)",
   },
 
@@ -54,16 +78,7 @@ export const tokens = {
 
   surface: {
     booked: "var(--token-surface-booked)",
-  },
-
-  space: {
-    s4: "var(--token-space-4)",
-    s8: "var(--token-space-8)",
-    s12: "var(--token-space-12)",
-    s16: "var(--token-space-16)",
-    s24: "var(--token-space-24)",
-    s32: "var(--token-space-32)",
-    s40: "var(--token-space-40)",
+    elevated: "var(--token-surface-elevated)",
   },
 
   shadow: {
@@ -74,5 +89,7 @@ export const tokens = {
 
   gradient: {
     brand: "var(--token-gradient-brand)",
+    item: "var(--token-gradient-item)",
+    dashboard: "var(--token-gradient-dashboard)",
   },
 } as const;

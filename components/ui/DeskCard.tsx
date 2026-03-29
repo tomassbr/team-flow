@@ -147,7 +147,14 @@ export function DeskCard({
           <StatusChip status="booked" label="Booked" />
         )}
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: tokens.space.s24 }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: tokens.space.s24,
+          alignItems: "flex-start",
+        }}
+      >
         <span
           style={{
             color: tokens.color.text.primary,

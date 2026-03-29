@@ -9,20 +9,9 @@ interface ToggleProps {
   disabled?: boolean;
 }
 
-export function Toggle({
-  checked,
-  onChange,
-  label,
-  disabled = false,
-}: ToggleProps) {
+export function Toggle({ checked, onChange, label, disabled = false }: ToggleProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: tokens.space.s12,
-      }}
-    >
+    <div style={{ display: "flex", alignItems: "center", gap: tokens.space.s12 }}>
       {label && (
         <span
           style={{
@@ -44,12 +33,15 @@ export function Toggle({
           width: 40,
           height: 20,
           borderRadius: tokens.radius.full,
-          background: tokens.color.border.strong,
+          background: checked
+            ? tokens.color.accent.primary
+            : tokens.color.border.strong,
           border: "none",
           cursor: disabled ? "not-allowed" : "pointer",
           opacity: disabled ? 0.5 : 1,
           padding: 0,
           position: "relative",
+          transition: "background 0.2s",
         }}
       >
         <span
