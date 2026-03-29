@@ -1,4 +1,4 @@
-# design.md — Smart Office Design Contract (for Cursor)
+# design.md — Team Flow Design Contract
 
 This file is the single source of truth for UI implementation (LIGHT ONLY).  
 **Rule:** do not invent new colors, spacing values, radii, font sizes, shadows, or gradients. Use only the tokens and rules below.
@@ -17,7 +17,7 @@ Use tokens by *role* (e.g., `color/text/primary`), never by ad-hoc hex values.
 - No custom border radii outside the radius scale.
 - No custom text sizes outside the type scale.
 - No new shadows beyond `effect/shadow/*`.
-- Gradient usage is limited to `gradient/brand` only.
+- Gradient usage is limited to `gradient/brand`, `gradient/item`, `gradient/dashboard` only.
 
 ### 1.3 Source of truth in code
 In the codebase, tokens must be referenced via:
@@ -67,14 +67,20 @@ No hardcoded hex colors in components.
 - Emphasis borders / input rings: `color/border/strong` (or use accent when appropriate)
 
 ### 2.5 Accents
-- `color/accent/primary` = `#0A1024`
+- `color/accent/primary` = `#6366F1`
 - `color/accent/secondary` = `#06B6D4`
 
 **Usage**
 - Primary CTAs, key highlights: `color/accent/primary`
 - Secondary accents, links, indicators: `color/accent/secondary`
 
-### 2.6 Status colors
+### 2.6 Button
+- `color/button/primary` = `#0F172A`
+
+**Usage**
+- Primary button fill (dark), CTA buttons
+
+### 2.7 Status colors
 - `color/status/success` = `#10B981`
 - `color/status/info` = `#3B82F6`
 - `color/status/warning` = `#F59E0B`
@@ -92,6 +98,7 @@ Spacing scale (rem):
 - `space/8`  = `0.5rem`
 - `space/12` = `0.75rem`
 - `space/16` = `1rem`
+- `space/20` = `1.25rem`
 - `space/24` = `1.5rem`
 - `space/32` = `2rem`
 - `space/40` = `2.5rem`
@@ -111,11 +118,13 @@ Radius scale (rem):
 - `radius/16` = `1rem`
 - `radius/20` = `1.25rem`
 - `radius/24` = `1.5rem`
+- `radius/28` = `1.75rem`
+- `radius/32` = `2rem`
 
 **Rules**
 - Use only these radii.
 - Buttons/inputs: `radius/16` (default) or `radius/20` (large/hero).
-- Cards/sheets: `radius/20` (default), `radius/24` (modal/sheet).
+- Cards: `radius/28` (desk cards), `radius/32` (This Week card).
 
 ---
 
@@ -178,14 +187,22 @@ Shadow tokens:
 
 ---
 
-## 7) Gradient
+## 7) Gradients
 
 - `gradient/brand`  
-  `linear-gradient(to right, rgba(37,99,235,0.4), rgba(34,211,238,0.4), rgba(79,70,229,0.4))`
+  `linear-gradient(to right, rgba(37,99,235,0.4), rgba(34,211,238,0.4), rgba(79,70,229,0.4))`  
+  **Usage:** primary CTAs, highlights, hero accents
+
+- `gradient/item`  
+  `linear-gradient(90deg, rgba(199,210,254,0.6) 0%, rgba(207,250,254,0.4) 50%, rgba(255,255,255,0.2) 100%)`  
+  **Usage:** booked desk cards, item surfaces
+
+- `gradient/dashboard`  
+  `radial-gradient(circle, #FFFFFF 0%, #F1F5F9 65%, #E2E8F0 100%)`  
+  **Usage:** dashboard page background
 
 **Rules**
-- Use sparingly: primary CTAs, highlights, hero accents.
-- Do not invent additional gradients.
+- Use only these gradients. Do not invent additional gradients.
 
 ---
 

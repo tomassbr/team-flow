@@ -1,12 +1,18 @@
-// TODO: Implement users API (GET, POST, DELETE)
-export async function GET() {
-  return Response.json({});
+// Users API is not yet implemented.
+// Return 501 Not Implemented for all methods until it is.
+const NOT_IMPLEMENTED = Response.json(
+  { error: "Not implemented" },
+  { status: 501 }
+);
+
+export function GET() {
+  return NOT_IMPLEMENTED;
 }
 
-export async function POST() {
-  return Response.json({});
+export function POST() {
+  return NOT_IMPLEMENTED;
 }
 
-export async function DELETE() {
-  return Response.json({});
+export function DELETE() {
+  return NOT_IMPLEMENTED;
 }

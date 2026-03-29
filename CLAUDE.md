@@ -1,8 +1,8 @@
-# CLAUDE.md — Smart Office App
+# CLAUDE.md — Team Flow
 
 ## Co je tento projekt
 
-**Smart Office Access** — SaaS webová aplikace pro malé hybridní týmy (5–30 uživatelů) pro správu rezervací sdílených pracovních míst (desků). Umožňuje vidět dostupnost desků, rychle rezervovat místo na konkrétní den, zkontrolovat kdo je dnes v kanclu, a spravovat workspace. PRO tier přidává QR check-in, auto-release a statistiky.
+**Team Flow** — SaaS webová aplikace pro malé hybridní týmy (5–30 uživatelů) pro správu rezervací sdílených pracovních míst (desků). Umožňuje vidět dostupnost desků, rychle rezervovat místo na konkrétní den, zkontrolovat kdo je dnes v kanclu, a spravovat workspace. PRO tier přidává QR check-in, auto-release a statistiky.
 
 Jde o **multi-tenant** produkt — každá firma (Company) má izolovaná data.
 

@@ -103,6 +103,8 @@ model Desk {
 
   company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   reservations  Reservation[]
+
+  @@index([companyId])
 }
 
 model Reservation {

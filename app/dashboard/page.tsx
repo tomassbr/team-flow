@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -6,41 +6,11 @@ import { DeskCard } from "@/components/ui/DeskCard";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { WorkspaceFilter } from "@/components/dashboard/WorkspaceFilter";
 import { tokens } from "@/styles/tokens.config";
-
-const MOCK_PEOPLE = [
-  { name: "Sarah", initial: "S" },
-  { name: "David", initial: "D" },
-  { name: "Emma", initial: "E" },
-  { name: "James", initial: "J" },
-  { name: "Mia", initial: "M" },
-];
-
-const MOCK_DESKS = [
-  { id: "1", name: "Window Spot 01", status: "available" as const },
-  {
-    id: "2",
-    name: "Standing Desk A",
-    status: "booked" as const,
-    user: "David C.",
-    duration: "Until 5 PM",
-  },
-  { id: "3", name: "Pod 03", status: "available" as const },
-  {
-    id: "4",
-    name: "Corner Desk B",
-    status: "booked" as const,
-    user: "Emma W.",
-    duration: "All Day",
-  },
-  { id: "5", name: "Quiet Zone 01", status: "available" as const },
-];
-
-const MOCK_WEEK = [
-  { label: "Today", date: "Tue, 24 Oct", percent: 85 },
-  { label: "Tomorrow", date: "Wed, 25 Oct", percent: 60 },
-  { label: "Thursday", date: "Thu, 26 Oct", percent: 40 },
-  { label: "Friday", date: "Fri, 27 Oct", percent: 20 },
-];
+import {
+  getDashboardDesks,
+  getDashboardReservations,
+  getWeekOccupancy,
+} from "@/lib/data/dashboard";
 
 function MonitorIcon() {
   return (
@@ -87,74 +57,42 @@ function EllipsisIcon() {
   );
 }
 
-async function fetchDashboardData(date: string) {
-  const headersList = await headers();
-  const cookie = headersList.get("cookie") ?? "";
-  const host = headersList.get("host") ?? "localhost:3000";
-  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-  const baseUrl = `${protocol}://${host}`;
-
-  try {
-    const [desksRes, reservationsRes] = await Promise.all([
-      fetch(`${baseUrl}/api/desks`, {
-        headers: { cookie },
-        cache: "no-store",
-      }),
-      fetch(`${baseUrl}/api/reservations?date=${date}`, {
-        headers: { cookie },
-        cache: "no-store",
-      }),
-    ]);
-
-    if (!desksRes.ok || !reservationsRes.ok) {
-      return {
-        desks: MOCK_DESKS,
-        reservations: [] as { deskId: string; userId: string }[],
-        useMock: true,
-        error: null,
-      };
-    }
-
-    const desks = await desksRes.json();
-    const { reservations } = await reservationsRes.json();
-    return { desks, reservations, useMock: false, error: null };
-  } catch (err) {
-    return {
-      desks: MOCK_DESKS,
-      reservations: [] as { deskId: string; userId: string }[],
-      useMock: true,
-      error: err instanceof Error ? err.message : "Failed to load",
-    };
-  }
-}
-
 export default async function DashboardPage() {
-  const today = new Date().toISOString().split("T")[0];
-  const { desks, reservations, useMock, error } = await fetchDashboardData(today);
+  const session = await auth();
 
-  const reservedDeskIds = new Set(
-    reservations.map((r: { deskId: string }) => r.deskId)
-  );
+  if (!session?.user?.companyId) {
+    redirect("/onboarding");
+  }
 
-  const reservationByDesk = Object.fromEntries(
-    reservations.map((r: { deskId: string; userId: string }) => [r.deskId, r])
-  );
+  const { companyId } = session.user;
+  const today = new Date();
 
-  const desksWithStatus = useMock
-    ? MOCK_DESKS
-    : desks.map((d: { id: string; name: string }) => {
-        const res = reservationByDesk[d.id];
-        return {
-          ...d,
-          status: res ? ("booked" as const) : ("available" as const),
-          user: res ? `User ${res.userId.slice(0, 8)}` : undefined,
-          duration: "All Day",
-        };
-      });
+  const [desks, reservations] = await Promise.all([
+    getDashboardDesks(companyId),
+    getDashboardReservations(companyId, today),
+  ]);
+
+  const weekOccupancy = await getWeekOccupancy(companyId, desks.length, today);
+
+  const reservationByDeskId = new Map(reservations.map((r) => [r.deskId, r]));
+
+  const desksWithStatus = desks.map((desk) => {
+    const reservation = reservationByDeskId.get(desk.id);
+    return {
+      ...desk,
+      status: reservation ? ("booked" as const) : ("available" as const),
+      user: reservation?.user.name ?? undefined,
+      duration: reservation ? "All Day" : undefined,
+    };
+  });
+
+  const usersToday = reservations.map((r) => r.user);
+  const visibleUsers = usersToday.slice(0, 5);
+  const overflowCount = Math.max(0, usersToday.length - visibleUsers.length);
 
   return (
     <>
-      {/* Left column — tokens: space/40, space/24 */}
+      {/* Left column */}
       <div
         style={{
           flex: 1,
@@ -195,42 +133,57 @@ export default async function DashboardPage() {
                 fontSize: tokens.type.micro,
               }}
             >
-              12 People
+              {usersToday.length} {usersToday.length === 1 ? "Person" : "People"}
             </span>
           </div>
-          <div
-            style={{
-              display: "flex",
-              gap: tokens.space.s24,
-              alignItems: "flex-end",
-            }}
-          >
-            {MOCK_PEOPLE.map((p) => (
-              <Avatar
-                key={p.name}
-                name={p.name}
-                alt={p.name}
-                size={56}
-                badge={<MonitorIcon />}
-              />
-            ))}
-            <div
+
+          {usersToday.length === 0 ? (
+            <p
               style={{
-                width: 56,
-                height: 56,
-                borderRadius: tokens.radius.full,
-                background: tokens.color.surface.level2,
-                border: `1px dashed ${tokens.color.border.strong}`,
                 color: tokens.color.text.muted,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: tokens.type.micro,
+                fontSize: tokens.type.body,
               }}
             >
-              +7
+              No one has booked a desk yet today.
+            </p>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                gap: tokens.space.s24,
+                alignItems: "flex-end",
+              }}
+            >
+              {visibleUsers.map((user) => (
+                <Avatar
+                  key={user.id}
+                  name={user.name ?? "?"}
+                  src={user.image}
+                  alt={user.name ?? "Team member"}
+                  size={56}
+                  badge={<MonitorIcon />}
+                />
+              ))}
+              {overflowCount > 0 && (
+                <div
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: tokens.radius.full,
+                    background: tokens.color.surface.level2,
+                    border: `1px dashed ${tokens.color.border.strong}`,
+                    color: tokens.color.text.muted,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: tokens.type.micro,
+                  }}
+                >
+                  +{overflowCount}
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </section>
 
         {/* Workspace */}
@@ -261,20 +214,6 @@ export default async function DashboardPage() {
             <WorkspaceFilter />
           </div>
 
-          {error && (
-            <div
-              style={{
-                padding: tokens.space.s16,
-                background: tokens.color.status.error,
-                color: tokens.color.text.onAccent,
-                fontSize: tokens.type.caption,
-                borderRadius: tokens.radius.r16,
-              }}
-            >
-              {error}
-            </div>
-          )}
-
           {desksWithStatus.length === 0 ? (
             <div
               style={{
@@ -287,7 +226,7 @@ export default async function DashboardPage() {
                 boxShadow: tokens.shadow.e1,
               }}
             >
-              No desks configured. Add desks in settings.
+              No desks configured. Add desks in admin settings.
             </div>
           ) : (
             <div
@@ -297,20 +236,16 @@ export default async function DashboardPage() {
                 gap: tokens.space.s24,
               }}
             >
-              {desksWithStatus.map((desk: { id: string; name: string; status: string; user?: string; duration?: string }) => (
+              {desksWithStatus.map((desk) => (
                 <DeskCard
                   key={desk.id}
                   name={desk.name}
-                  status={desk.status as "available" | "booked"}
+                  status={desk.status}
                   user={desk.user}
                   duration={desk.duration}
                 />
               ))}
-              <DeskCard
-                name=""
-                status="available"
-                variant="addNew"
-              />
+              <DeskCard name="" status="available" variant="addNew" />
             </div>
           )}
         </section>
@@ -324,6 +259,7 @@ export default async function DashboardPage() {
           display: "flex",
           flexDirection: "column",
           gap: tokens.space.s16,
+          overflow: "visible",
         }}
       >
         <div
@@ -374,8 +310,11 @@ export default async function DashboardPage() {
               gap: tokens.space.s24,
             }}
           >
-            {MOCK_WEEK.map((day) => (
-              <div key={day.label} style={{ display: "flex", flexDirection: "column", gap: tokens.space.s12 }}>
+            {weekOccupancy.map((day) => (
+              <div
+                key={day.date.toISOString()}
+                style={{ display: "flex", flexDirection: "column", gap: tokens.space.s12 }}
+              >
                 <div
                   style={{
                     display: "flex",
@@ -399,7 +338,7 @@ export default async function DashboardPage() {
                         fontSize: tokens.type.micro,
                       }}
                     >
-                      {day.date}
+                      {day.dateLabel}
                     </span>
                   </div>
                   <span
@@ -416,15 +355,19 @@ export default async function DashboardPage() {
               </div>
             ))}
           </div>
-        </div>
 
-        <Button
-          variant="gradient"
-          icon={<CalendarIcon />}
-          style={{ width: "100%", padding: `${tokens.space.s16} ${tokens.space.s24}` }}
-        >
-          Book Future Date
-        </Button>
+          <Button
+            variant="gradient"
+            icon={<CalendarIcon />}
+            style={{
+              width: "100%",
+              padding: `${tokens.space.s16} ${tokens.space.s24}`,
+              marginTop: tokens.space.s12,
+            }}
+          >
+            Book Future Date
+          </Button>
+        </div>
       </aside>
     </>
   );

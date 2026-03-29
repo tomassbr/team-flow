@@ -27,3 +27,31 @@ body {
   color: var(--token-text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
+
+/* Token-driven input base — applied by the Input component */
+.ui-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--token-surface-1);
+  border: 1px solid var(--token-border-strong);
+  border-radius: var(--token-radius-16);
+  padding: var(--token-space-12) var(--token-space-16);
+  font-size: var(--token-type-body);
+  color: var(--token-text-primary);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ui-input::placeholder {
+  color: var(--token-text-muted);
+}
+
+.ui-input:focus {
+  border-color: var(--token-accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.ui-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

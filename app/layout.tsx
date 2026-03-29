@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Office Access",
+  title: "Team Flow",
   description: "Rezervace pracovních míst pro hybridní týmy",
 };
 

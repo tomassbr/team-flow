@@ -11,8 +11,8 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({
-  appName = "Team Space",
-  logoLetters = "TS",
+  appName = "Team Flow",
+  logoLetters = "TF",
   userName,
   userRole,
   userImage,

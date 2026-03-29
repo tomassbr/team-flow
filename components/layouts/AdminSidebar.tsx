@@ -67,8 +67,8 @@ interface AdminSidebarProps {
 }
 
 export function AdminSidebar({
-  appName = "Team Space",
-  logoLetters = "TS",
+  appName = "Team Flow",
+  logoLetters = "TF",
   userName,
   userRole,
 }: AdminSidebarProps) {

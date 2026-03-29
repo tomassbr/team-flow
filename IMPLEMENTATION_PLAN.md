@@ -1,6 +1,6 @@
-# Smart Office Access – Technical Implementation Plan
+# Team Flow – Technical Implementation Plan
 
-Based on: `PROJECT_SPEC.md` (Smart Office Access – Authenticated Application Specification)
+Based on: `PROJECT_SPEC.md` (Team Flow – Authenticated Application Specification)
 
 ---
 
