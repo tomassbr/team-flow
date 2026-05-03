@@ -55,26 +55,34 @@ export async function POST(request: Request) {
   const companyId = getCompanyId(cs);
 
   // Atomically check the desk limit and create the desk to prevent race conditions.
-  const desk = await prisma.$transaction(async (tx) => {
-    const company = await tx.company.findUnique({
-      where: { id: companyId },
-      select: { maxDesks: true },
+  let desk;
+  try {
+    desk = await prisma.$transaction(async (tx) => {
+      const company = await tx.company.findUnique({
+        where: { id: companyId },
+        select: { maxDesks: true },
+      });
+
+      if (!company) throw new DeskError("Company not found", 404);
+
+      const maxDesks = company.maxDesks ?? 0;
+      const deskCount = await tx.desk.count({ where: { companyId } });
+
+      if (deskCount >= maxDesks) {
+        throw new DeskError(`Desk limit reached (max ${maxDesks})`, 403);
+      }
+
+      return tx.desk.create({
+        data: { name, companyId },
+        select: { id: true, name: true, isActive: true, createdAt: true },
+      });
     });
-
-    if (!company) throw new DeskError("Company not found", 404);
-
-    const maxDesks = company.maxDesks ?? 0;
-    const deskCount = await tx.desk.count({ where: { companyId } });
-
-    if (deskCount >= maxDesks) {
-      throw new DeskError(`Desk limit reached (max ${maxDesks})`, 403);
+  } catch (err) {
+    if (err instanceof DeskError) {
+      return Response.json({ error: err.message }, { status: err.status });
     }
-
-    return tx.desk.create({
-      data: { name, companyId },
-      select: { id: true, name: true, isActive: true, createdAt: true },
-    });
-  });
+    throw err;
+  }
 
   return Response.json(desk, { status: 201 });
 }

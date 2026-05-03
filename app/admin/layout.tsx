@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { AdminLayout } from "@/components/layouts/AdminLayout";
+import { AppLayout } from "@/components/layouts/AppLayout";
 
 export default async function AdminRootLayout({
   children,
@@ -13,11 +13,14 @@ export default async function AdminRootLayout({
   if (!session.user.companyId) redirect("/onboarding");
   if (session.user.role !== "ADMIN") redirect("/dashboard");
 
-  const userName = session.user.name ?? "User";
-
   return (
-    <AdminLayout userName={userName} userRole="Admin">
+    <AppLayout
+      userName={session.user.name ?? "User"}
+      userRole="Admin"
+      userImage={session.user.image ?? null}
+      variant="admin-page"
+    >
       {children}
-    </AdminLayout>
+    </AppLayout>
   );
 }

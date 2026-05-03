@@ -13,7 +13,7 @@ export default async function DashboardLayout({
   if (!session.user.companyId) redirect("/onboarding");
 
   const userName = session.user.name ?? "User";
-  const userRole = session.user.role === "ADMIN" ? "Admin" : "Member";
+  const userRole: "Admin" | "Member" = session.user.role === "ADMIN" ? "Admin" : "Member";
   const userImage = session.user.image ?? null;
 
   return (
@@ -21,6 +21,7 @@ export default async function DashboardLayout({
       userName={userName}
       userRole={userRole}
       userImage={userImage}
+      variant="dashboard"
     >
       {children}
     </AppLayout>

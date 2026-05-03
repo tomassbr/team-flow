@@ -4,25 +4,8 @@ import { useState, type FormEvent } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
+import { ArrowRightIcon } from "@/components/icons";
 import { tokens } from "@/styles/tokens.config";
-
-function ArrowRightIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
 
 export function OnboardingForm() {
   const [name, setName] = useState("");
@@ -44,10 +27,15 @@ export function OnboardingForm() {
         body: JSON.stringify({ name: name.trim() }),
       });
 
-      const data = await res.json();
-
       if (!res.ok) {
-        setError(data.error ?? "Něco se pokazilo. Zkus to znovu.");
+        let errorMsg = "Něco se pokazilo. Zkus to znovu.";
+        try {
+          const data = await res.json();
+          if (data.error) errorMsg = data.error;
+        } catch {
+          // Non-JSON error response (e.g. 500 HTML) — use generic message
+        }
+        setError(errorMsg);
         return;
       }
 
@@ -117,40 +105,54 @@ export function OnboardingForm() {
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={isPending || name.trim().length === 0}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: tokens.space.s12,
-          padding: `${tokens.space.s16} ${tokens.space.s24}`,
-          background: "#0F172A",
-          color: tokens.color.text.onAccent,
-          border: "none",
-          borderRadius: tokens.radius.r16,
-          fontSize: tokens.type.body,
-          fontWeight: 500,
-          cursor: isPending || name.trim().length === 0 ? "not-allowed" : "pointer",
-          opacity: isPending || name.trim().length === 0 ? 0.5 : 1,
-          boxShadow:
-            "0 0 16px rgba(99, 102, 241, 0.5), 0 0 32px rgba(34, 211, 238, 0.4), 0 0 48px rgba(79, 70, 229, 0.35)",
-          transition: "opacity 0.15s",
-        }}
-      >
-        {isPending ? "Vytvářím workspace…" : "Vytvořit workspace"}
-        {!isPending && (
-          <span
-            style={{
-              color: tokens.color.accent.secondary,
-              display: "inline-flex",
-            }}
-          >
-            <ArrowRightIcon />
-          </span>
-        )}
-      </button>
+      <div style={{ position: "relative" }}>
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: -6,
+            background: tokens.gradient.brand,
+            borderRadius: tokens.radius.r20,
+            filter: "blur(16px)",
+            opacity: isPending || name.trim().length === 0 ? 0 : 0.35,
+            transition: "opacity 0.15s",
+          }}
+        />
+        <button
+          type="submit"
+          disabled={isPending || name.trim().length === 0}
+          style={{
+            position: "relative",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: tokens.space.s12,
+            padding: `${tokens.space.s16} ${tokens.space.s24}`,
+            background: tokens.color.button.primary,
+            color: tokens.color.text.onAccent,
+            border: "none",
+            borderRadius: tokens.radius.r16,
+            fontSize: tokens.type.body,
+            fontWeight: 500,
+            cursor: isPending || name.trim().length === 0 ? "not-allowed" : "pointer",
+            opacity: isPending || name.trim().length === 0 ? 0.5 : 1,
+            transition: "opacity 0.15s",
+          }}
+        >
+          {isPending ? "Vytvářím workspace…" : "Vytvořit workspace"}
+          {!isPending && (
+            <span
+              style={{
+                color: tokens.color.accent.secondary,
+                display: "inline-flex",
+              }}
+            >
+              <ArrowRightIcon />
+            </span>
+          )}
+        </button>
+      </div>
     </form>
   );
 }

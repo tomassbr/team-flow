@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { requireAuth, requireCompany, requireRole, getCompanyId } from "@/lib/tenant";
 import { parseName } from "@/lib/validation";
+import { rateLimitByIP, rateLimitHeaders } from "@/lib/rate-limit";
 
 const FREE_PLAN_MAX_DESKS = 10;
 const FREE_PLAN_MAX_USERS = 20;
@@ -34,6 +35,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const rl = rateLimitByIP(request, 5, 60_000);
+  if (!rl.allowed) {
+    return Response.json({ error: "Too many requests" }, { status: 429, headers: rateLimitHeaders(rl) });
+  }
+
   const session = await requireAuth();
   if (session instanceof Response) return session;
 
@@ -82,6 +88,11 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const rl = rateLimitByIP(request, 20, 60_000);
+  if (!rl.allowed) {
+    return Response.json({ error: "Too many requests" }, { status: 429, headers: rateLimitHeaders(rl) });
+  }
+
   const session = await requireAuth();
   if (session instanceof Response) return session;
 

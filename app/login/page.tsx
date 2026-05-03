@@ -59,24 +59,35 @@ export default async function LoginPage({
     <div
       style={{
         minHeight: "100vh",
-        background: tokens.color.bg.base,
+        background: tokens.color.surface.level1,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: tokens.space.s24,
+        position: "relative",
       }}
     >
+      {/* Top edge gradient matching dashboard */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 3,
+          background: tokens.gradient.brand,
+        }}
+      />
+
       <div
         style={{
           width: "100%",
           maxWidth: 400,
-          background: tokens.color.surface.level1,
-          borderRadius: tokens.radius.r24,
-          boxShadow: tokens.shadow.e3,
-          padding: tokens.space.s40,
           display: "flex",
           flexDirection: "column",
           gap: tokens.space.s32,
+          alignItems: "stretch",
         }}
       >
         {/* Brand */}
@@ -89,7 +100,7 @@ export default async function LoginPage({
             textAlign: "center",
           }}
         >
-          <Logo letters="SO" size={48} />
+          <Logo letters="TS" size={48} />
           <div>
             <h1
               style={{
@@ -100,7 +111,7 @@ export default async function LoginPage({
                 marginBottom: tokens.space.s8,
               }}
             >
-              Team Flow
+              Welcome back
             </h1>
             <p
               style={{
@@ -108,7 +119,7 @@ export default async function LoginPage({
                 color: tokens.color.text.secondary,
               }}
             >
-              Přihlas se a spravuj rezervace svého týmu.
+              Sign in to your Team Flow workspace.
             </p>
           </div>
         </div>
@@ -131,36 +142,84 @@ export default async function LoginPage({
           </div>
         )}
 
-        {/* Google sign-in */}
-        <form
-          action={async () => {
-            "use server";
-            await signIn("google", { redirectTo: callbackUrl });
+        {/* Google sign-in with ambient glow */}
+        <div style={{ width: "100%", position: "relative" }}>
+          {/* Outer soft halo */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: -12,
+              background: tokens.gradient.brand,
+              borderRadius: tokens.radius.r24,
+              filter: "blur(28px)",
+              opacity: 0.55,
+            }}
+          />
+          {/* Inner sharp rim */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: -2,
+              background: tokens.gradient.brand,
+              borderRadius: tokens.radius.r20,
+              filter: "blur(6px)",
+              opacity: 0.7,
+            }}
+          />
+          <form
+            action={async () => {
+              "use server";
+              await signIn("google", { redirectTo: callbackUrl });
+            }}
+            style={{ position: "relative" }}
+          >
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: tokens.space.s12,
+                padding: `${tokens.space.s16} ${tokens.space.s24}`,
+                background: tokens.color.button.primary,
+                border: "none",
+                borderRadius: tokens.radius.r16,
+                fontSize: tokens.type.body,
+                fontWeight: 500,
+                color: tokens.color.text.onAccent,
+                cursor: "pointer",
+              }}
+            >
+              <GoogleIcon />
+              Sign in with Google
+            </button>
+          </form>
+        </div>
+
+        {/* Secondary link */}
+        <p
+          style={{
+            fontSize: tokens.type.caption,
+            color: tokens.color.text.secondary,
+            textAlign: "center",
+            margin: 0,
           }}
         >
-          <button
-            type="submit"
+          Don&apos;t have an account?{" "}
+          <a
+            href="/onboarding"
             style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: tokens.space.s12,
-              padding: `${tokens.space.s16} ${tokens.space.s24}`,
-              background: tokens.color.surface.level1,
-              border: `1px solid ${tokens.color.border.strong}`,
-              borderRadius: tokens.radius.r16,
-              fontSize: tokens.type.body,
+              color: tokens.color.accent.primary,
               fontWeight: 500,
-              color: tokens.color.text.primary,
-              cursor: "pointer",
-              boxShadow: tokens.shadow.e1,
+              textDecoration: "none",
             }}
           >
-            <GoogleIcon />
-            Pokračovat přes Google
-          </button>
-        </form>
+            Request access
+          </a>
+        </p>
 
         {/* Dev-only credentials form — never rendered in production */}
         {IS_DEV && (
