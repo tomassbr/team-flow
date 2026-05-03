@@ -1,0 +1,37 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  issue_comment:
+    types: [created]
+
+jobs:
+  claude-review:
+    name: Claude Review
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'pull_request') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && contains(github.event.comment.body, '@claude'))
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-sonnet-4-6
+          direct_prompt: |
+            Review this PR as a senior engineer. Focus on:
+            1. Multi-tenant safety — every API route must filter by companyId
+            2. Design token compliance — no hardcoded hex/px values in components
+            3. Server vs Client component correctness (Next.js App Router)
+            4. Security: auth checks, input validation, SQL injection surface
+            5. TypeScript correctness — no any, proper types
+
+            Keep feedback concise and actionable. Flag blockers vs suggestions clearly.
+          trigger_phrase: "@claude"
