@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Image from "next/image";
 import { tokens } from "@/styles/tokens.config";
 
 interface AvatarProps {
@@ -54,11 +55,12 @@ export function Avatar({
         }}
       >
         {safeSrc && !imgFailed ? (
-          <img
+          <Image
             src={safeSrc}
             alt={alt}
-            loading="lazy"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            width={size}
+            height={size}
+            style={{ objectFit: "cover" }}
             onError={() => setImgFailed(true)}
           />
         ) : (

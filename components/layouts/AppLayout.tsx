@@ -5,10 +5,11 @@ import { tokens } from "@/styles/tokens.config";
 interface AppLayoutProps {
   children: ReactNode;
   userName: string;
-  userRole: string;
+  userRole: "Member" | "Admin";
   userImage?: string | null;
   appName?: string;
   logoLetters?: string;
+  variant?: "dashboard" | "admin-page";
 }
 
 export function AppLayout({
@@ -18,12 +19,13 @@ export function AppLayout({
   userImage,
   appName,
   logoLetters,
+  variant = "dashboard",
 }: AppLayoutProps) {
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: tokens.color.bg.base,
+        background: tokens.gradient.dashboard,
       }}
     >
       <AppHeader
@@ -32,16 +34,11 @@ export function AppLayout({
         userName={userName}
         userRole={userRole}
         userImage={userImage}
+        variant={variant}
       />
 
-      <main
-        style={{
-          display: "flex",
-          padding: `0 ${tokens.space.s40} ${tokens.space.s40}`,
-          gap: tokens.space.s40,
-        }}
-      >
-        {children}
+      <main style={{ padding: `0 ${tokens.space.s40} ${tokens.space.s40}` }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>{children}</div>
       </main>
     </div>
   );

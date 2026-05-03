@@ -1,48 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { tokens } from "@/styles/tokens.config";
-
-function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: () => void }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={onChange}
-      style={{
-        width: 40,
-        height: 20,
-        borderRadius: tokens.radius.full,
-        background: checked ? tokens.color.accent.primary : tokens.color.border.strong,
-        border: "none",
-        cursor: "pointer",
-        padding: 0,
-        position: "relative",
-        flexShrink: 0,
-        transition: "background 0.2s",
-      }}
-    >
-      <span
-        style={{
-          position: "absolute",
-          left: 4,
-          top: 4,
-          width: 12,
-          height: 12,
-          borderRadius: tokens.radius.full,
-          background: tokens.color.surface.level1,
-          boxShadow: tokens.shadow.e1,
-          transform: checked ? "translateX(20px)" : "translateX(0)",
-          transition: "transform 0.2s",
-        }}
-      />
-    </button>
-  );
-}
+import { Toggle } from "@/components/ui/Toggle";
 
 export function AdminModeToggle() {
-  const [adminMode, setAdminMode] = useState(false);
+  const router = useRouter();
 
   return (
     <div
@@ -66,7 +29,7 @@ export function AdminModeToggle() {
       >
         Admin Mode
       </span>
-      <ToggleSwitch checked={adminMode} onChange={() => setAdminMode((v) => !v)} />
+      <Toggle checked={false} onChange={() => router.push("/admin")} />
     </div>
   );
 }

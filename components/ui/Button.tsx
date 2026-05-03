@@ -24,8 +24,6 @@ const baseStyles: CSSProperties = {
   border: "none",
   cursor: "pointer",
   transition: "opacity 0.2s",
-  position: "relative",
-  zIndex: 1,
 };
 
 const variantStyles: Record<Variant, CSSProperties> = {
@@ -49,20 +47,6 @@ const variantStyles: Record<Variant, CSSProperties> = {
   },
 };
 
-/**
- * Gradient glow layer — matches Figma "Animated ambient glow" / "Hover Glow Effect"
- * rectangle: linear-gradient(#6366F1 → #06B6D4) + layer blur 12px
- */
-const glowLayerStyle: CSSProperties = {
-  position: "absolute",
-  inset: 0,
-  borderRadius: tokens.radius.r16,
-  background: `linear-gradient(to right, ${tokens.color.accent.primary}, ${tokens.color.accent.secondary})`,
-  filter: "blur(12px)",
-  zIndex: 0,
-  pointerEvents: "none",
-};
-
 export function Button({
   children,
   variant = "primary",
@@ -79,6 +63,8 @@ export function Button({
     width: fullWidth ? "100%" : undefined,
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.5 : 1,
+    position: "relative",
+    zIndex: 1,
     ...style,
   };
 
@@ -93,7 +79,6 @@ export function Button({
     </span>
   );
 
-  // Gradient variant wraps button in a glow container
   if (variant === "gradient") {
     return (
       <div
@@ -103,10 +88,23 @@ export function Button({
           width: fullWidth ? "100%" : undefined,
         }}
       >
-        <span style={glowLayerStyle} aria-hidden="true" />
+        {/* Ambient gradient glow layer behind the button */}
+        <span
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: -6,
+            borderRadius: 22,
+            background: `linear-gradient(to right, ${tokens.color.accent.primary}, ${tokens.color.accent.secondary})`,
+            filter: "blur(14px)",
+            opacity: 0.65,
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
         <button
           className={className}
-          style={buttonStyle}
+          style={{ ...buttonStyle, width: fullWidth ? "100%" : undefined }}
           disabled={disabled}
           {...props}
         >
