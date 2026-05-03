@@ -42,6 +42,28 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  /**
+   * react-native-web: alias `react-native` → `react-native-web` so that
+   * shared components in packages/ui (built with RN primitives) render
+   * correctly in Next.js. View → <div>, Text → <span>, Image → <img>, etc.
+   *
+   * This is the standard approach for sharing UI components across
+   * React Native and web in a monorepo (used by Expo, Meta, and others).
+   */
+  webpack(config) {
+    config.resolve.alias = {
+      ...(config.resolve.alias as Record<string, string>),
+      "react-native$": "react-native-web",
+    };
+    return config;
+  },
+  images: {
+    remotePatterns: [
+      // Google OAuth avatars
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "*.googleusercontent.com" },
+    ],
+  },
   async headers() {
     return [
       {
