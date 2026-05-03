@@ -19,7 +19,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@team-flow/shared": ["./packages/shared/src/index.ts"],
+      "@team-flow/shared/*": ["./packages/shared/src/*"],
+      "@team-flow/api-client": ["./packages/api-client/src/index.ts"],
+      "@team-flow/ui": ["./packages/ui/src/index.ts"]
     }
   },
   "include": [
@@ -30,5 +34,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "apps/mobile"]
 }

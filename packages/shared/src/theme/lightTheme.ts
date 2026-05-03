@@ -1,0 +1,100 @@
+import type { Theme } from "./types";
+
+export const lightTheme: Theme = {
+  colors: {
+    bg: {
+      base: "#F3F5F9",
+      canvas: "#F3F5F9",
+    },
+    surface: {
+      level1: "#FFFFFF",
+      level2: "#F8FAFC",
+      glassTint: "rgba(241, 245, 249, 0.8)",
+      elevated: "#EEF4FE",
+    },
+    text: {
+      primary: "#0F172A",
+      secondary: "#475569",
+      muted: "#64748B",
+      onAccent: "#FFFFFF",
+    },
+    border: {
+      subtle: "#F1F5F9",
+      strong: "#CBD5E1",
+    },
+    accent: {
+      primary: "#6366F1",
+      primaryBg: "rgba(99, 102, 241, 0.1)",
+      primaryBorder: "rgba(99, 102, 241, 0.2)",
+      secondary: "#06B6D4",
+      secondaryBg: "rgba(6, 182, 212, 0.15)",
+      secondaryBorder: "rgba(6, 182, 212, 0.3)",
+    },
+    button: {
+      primary: "#0F172A",
+    },
+    status: {
+      success: "#10B981",
+      successBg: "rgba(16, 185, 129, 0.15)",
+      successBorder: "rgba(16, 185, 129, 0.3)",
+      info: "#3B82F6",
+      warning: "#F59E0B",
+      error: "#EF4444",
+    },
+  },
+
+  spacing: {
+    s4: 4,
+    s8: 8,
+    s12: 12,
+    s16: 16,
+    s20: 20,
+    s24: 24,
+    s32: 32,
+    s40: 40,
+  },
+
+  radius: {
+    r12: 12,
+    r16: 16,
+    r20: 20,
+    r24: 24,
+    r28: 28,
+    r32: 32,
+    full: 9999,
+  },
+
+  typography: {
+    display: { fontSize: 30, fontWeight: "500", letterSpacing: -0.75 },
+    h1: { fontSize: 24, fontWeight: "500", letterSpacing: -0.6 },
+    h2: { fontSize: 20, fontWeight: "500", letterSpacing: -0.5 },
+    body: { fontSize: 16, fontWeight: "400" },
+    bodyStrong: { fontSize: 16, fontWeight: "500" },
+    caption: { fontSize: 14, fontWeight: "400" },
+    micro: { fontSize: 12, fontWeight: "500" },
+  },
+
+  shadows: {
+    e1: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+    e2: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.04,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    e3: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.06,
+      shadowRadius: 12,
+      elevation: 4,
+    },
+  },
+};
