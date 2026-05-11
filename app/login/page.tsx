@@ -100,7 +100,7 @@ export default async function LoginPage({
             textAlign: "center",
           }}
         >
-          <Logo letters="TS" size={48} />
+          <Logo letters="TF" size={48} />
           <div>
             <h1
               style={{
