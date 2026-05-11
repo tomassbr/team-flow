@@ -95,7 +95,7 @@ export function DeskCard({
         padding: tokens.space.s24,
         borderRadius: tokens.radius.r24,
         background: isBooked
-          ? "linear-gradient(135deg, #C6D1FF 0%, #CFFAFF 50%, #FFFFFF 100%)"
+          ? tokens.gradient.item
           : "rgba(255,255,255,0.95)",
         backdropFilter: isBooked ? "blur(24px)" : "blur(16px)",
         WebkitBackdropFilter: isBooked ? "blur(24px)" : "blur(16px)",

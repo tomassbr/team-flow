@@ -81,6 +81,30 @@ export const typography = {
   micro: { fontSize: 12, fontWeight: "500" as const },
 } as const;
 
+/**
+ * Gradient definice — jediný zdroj pravdy pro obě platformy.
+ *
+ * Web:    používej `gradient.brand.css` / `gradient.dashboard.css` přímo jako background string.
+ * Mobile: používej `gradient.brand.colors` / `gradient.deskBooked.colors` v LinearGradient.
+ */
+export const gradient = {
+  /** Primární CTA gradient (tlačítka, hero akcenty) */
+  brand: {
+    css: "linear-gradient(135deg, #6366F1 0%, #06B6D4 100%)",
+    colors: ["#6366F1", "#06B6D4"] as [string, string],
+  },
+  /** Gradient pro rezervovanou desk kartu */
+  deskBooked: {
+    css: "linear-gradient(135deg, #C6D1FF 0%, #CFFAFF 50%, #FFFFFF 100%)",
+    colors: ["#C6D1FF", "#CFFAFF", "#FFFFFF"] as [string, string, string],
+  },
+  /** Jemné pozadí dashboardu */
+  dashboard: {
+    css: "linear-gradient(180deg, #EEF2FF 0%, #F3F5F9 50%)",
+    colors: ["#EEF2FF", "#F3F5F9"] as [string, string],
+  },
+} as const;
+
 /** Elevation shadows (web CSS string format; mobile uses shadowOffset/elevation) */
 export const shadows = {
   e1: "0 1px 2px 0 rgba(0,0,0,0.05)",
