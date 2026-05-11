@@ -143,11 +143,13 @@ export default function DashboardScreen() {
           <SkeletonLoader count={6} />
         ) : (
           <FlatList
+            key={filter}
             data={gridData}
             numColumns={2}
             keyExtractor={(item) => item.id}
             columnWrapperStyle={styles.row}
             contentContainerStyle={styles.grid}
+            style={styles.flatList}
             refreshControl={
               <RefreshControl
                 refreshing={isRefetching}
@@ -262,10 +264,14 @@ const styles = StyleSheet.create({
   pillTextActive: {
     color: colors.text.primary,
   },
+  flatList: {
+    flex: 1,
+  },
   grid: {
     padding: spacing.s16,
     gap: spacing.s12,
     paddingBottom: spacing.s32,
+    flexGrow: 1,
   },
   row: {
     gap: spacing.s12,
