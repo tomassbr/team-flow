@@ -34,13 +34,12 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid credentials" }, { status: 401 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email: devEmail } });
-  if (!user) {
-    return Response.json(
-      { error: `Dev user '${devEmail}' not found in database. Run seed or create the user first.` },
-      { status: 404 }
-    );
-  }
+  // Upsert dev user — identicky jako web Credentials provider (nemusí existovat předem)
+  const user = await prisma.user.upsert({
+    where: { email: devEmail },
+    update: {},
+    create: { email: devEmail, name: "Dev User" },
+  });
 
   const sessionToken = await createMobileSessionToken(user.id);
 

@@ -148,7 +148,13 @@ export const authService = {
     return true;
   },
 
-  /** Validate the stored session token against the backend. */
+  /**
+   * Validuje uložený session token proti backendu a vrátí data uživatele.
+   *
+   * Volá /api/auth/mobile/session (vlastní endpoint) místo NextAuth interního
+   * /api/auth/session — ten nemusí správně zpracovat ručně vytvořený JWT
+   * při použití PrismaAdapter v database-session módu.
+   */
   async getSession(): Promise<{
     id: string;
     email: string;
@@ -160,7 +166,7 @@ export const authService = {
     const token = await SecureStore.getItemAsync(SESSION_TOKEN_KEY);
     if (!token) return null;
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/mobile/session`, {
       headers: { Cookie: `${SESSION_COOKIE_NAME}=${token}` },
     });
 
