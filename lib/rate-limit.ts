@@ -24,7 +24,7 @@ function prune() {
 }
 
 if (typeof setInterval !== "undefined") {
-  setInterval(prune, PRUNE_INTERVAL_MS).unref?.();
+  (setInterval(prune, PRUNE_INTERVAL_MS) as unknown as NodeJS.Timeout).unref?.();
 }
 
 export interface RateLimitResult {

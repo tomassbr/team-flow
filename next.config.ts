@@ -42,6 +42,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Turbopack (default in Next.js 16) needs its own alias config.
+  turbopack: {
+    resolveAlias: {
+      "react-native": "react-native-web",
+    },
+  },
   /**
    * react-native-web: alias `react-native` → `react-native-web` so that
    * shared components in packages/ui (built with RN primitives) render
