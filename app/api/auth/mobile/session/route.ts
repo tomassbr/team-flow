@@ -5,31 +5,35 @@ import { MOBILE_COOKIE_NAME } from "../_session";
 /**
  * GET /api/auth/mobile/session
  *
- * Validuje mobilní session token (zaslaný v Cookie nebo Authorization: Bearer hlavičce)
- * a vrací aktuální data uživatele přímo z DB.
+ * Validuje mobilní session token a vrací aktuální data uživatele z DB.
+ * Token se posílá jako Authorization: Bearer (preferováno) nebo Cookie header.
  *
  * Proč vlastní endpoint místo GET /api/auth/session:
- * NextAuth v5 s PrismaAdapterem může v database-session módu ignorovat JWT cookie
- * zaslaný manuálně z mobilního klienta. Tento endpoint dekóduje token přímo
- * pomocí @auth/core/jwt a vrátí čerstvá data z DB.
+ * NextAuth v5 + PrismaAdapter může ignorovat manuálně vytvořený JWT token.
+ * Tento endpoint dekóduje token přímo přes @auth/core/jwt decode.
  */
 export async function GET(request: Request) {
-  // Token může přijít jako Cookie nebo Authorization: Bearer
-  const cookieHeader = request.headers.get("cookie") ?? "";
   const authHeader = request.headers.get("authorization") ?? "";
+  const cookieHeader = request.headers.get("cookie") ?? "";
 
   let rawToken: string | null = null;
 
-  const cookieMatch = cookieHeader.match(
-    new RegExp(`(?:^|;\\s*)${MOBILE_COOKIE_NAME}=([^;]+)`)
-  );
-  if (cookieMatch?.[1]) {
-    rawToken = cookieMatch[1];
-  } else if (authHeader.startsWith("Bearer ")) {
-    rawToken = authHeader.slice(7);
+  // Preferuj Authorization: Bearer (iOS NSHTTPCookieStorage nemodifikuje tento header)
+  if (authHeader.startsWith("Bearer ")) {
+    rawToken = authHeader.slice(7).trim();
+  } else {
+    // Záloha: Cookie header (regex s escapovanou tečkou)
+    const escapedName = MOBILE_COOKIE_NAME.replace(/\./g, "\\.");
+    const cookieMatch = cookieHeader.match(
+      new RegExp(`(?:^|;\\s*)${escapedName}=([^;]+)`)
+    );
+    if (cookieMatch?.[1]) {
+      rawToken = cookieMatch[1].trim();
+    }
   }
 
   if (!rawToken) {
+    console.warn("[mobile/session] no token in Authorization or Cookie header");
     return Response.json({ user: null }, { status: 401 });
   }
 
@@ -40,12 +44,14 @@ export async function GET(request: Request) {
       secret: process.env.AUTH_SECRET!,
       salt: MOBILE_COOKIE_NAME,
     });
-  } catch {
+  } catch (e) {
+    console.warn("[mobile/session] decode failed:", e instanceof Error ? e.message : e);
     return Response.json({ user: null }, { status: 401 });
   }
 
   const userId = decoded?.id ?? decoded?.sub;
   if (!userId) {
+    console.warn("[mobile/session] decoded token has no id/sub:", decoded);
     return Response.json({ user: null }, { status: 401 });
   }
 
@@ -62,6 +68,7 @@ export async function GET(request: Request) {
   });
 
   if (!user) {
+    console.warn("[mobile/session] user not found in DB for id:", userId);
     return Response.json({ user: null }, { status: 401 });
   }
 
