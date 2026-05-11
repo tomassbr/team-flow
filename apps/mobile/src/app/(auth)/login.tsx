@@ -17,13 +17,18 @@ import { colors, spacing, radius } from "@team-flow/shared";
 
 export default function LoginScreen() {
   const { setSession } = useAuthStore();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState(__DEV__ ? "dev@teamflow.local" : "");
+  const [password, setPassword] = useState(__DEV__ ? "devpass123" : "");
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
+  const [devLoading, setDevLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const anyLoading = googleLoading || appleLoading || devLoading;
+
   async function handleGoogleSignIn() {
-    setLoading(true);
+    if (anyLoading) return;
+    setGoogleLoading(true);
     setError(null);
     try {
       const success = await authService.signInWithGoogle();
@@ -35,12 +40,13 @@ export default function LoginScreen() {
     } catch {
       setError("Sign in failed. Check your internet connection.");
     } finally {
-      setLoading(false);
+      setGoogleLoading(false);
     }
   }
 
   async function handleAppleSignIn() {
-    setLoading(true);
+    if (anyLoading) return;
+    setAppleLoading(true);
     setError(null);
     try {
       const success = await authService.signInWithApple();
@@ -52,24 +58,26 @@ export default function LoginScreen() {
     } catch {
       setError("Apple sign in failed. Please try again.");
     } finally {
-      setLoading(false);
+      setAppleLoading(false);
     }
   }
 
   async function handleDevSignIn() {
-    setLoading(true);
+    if (anyLoading) return;
+    setDevLoading(true);
     setError(null);
     try {
       const success = await authService.signInWithCredentials(email, password);
       if (success) {
         await hydrateSession();
       } else {
-        setError("Invalid credentials.");
+        setError("Invalid credentials. Is the dev server running?");
       }
-    } catch {
-      setError("Sign in failed.");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg.includes("abort") ? "Request timed out. Is the dev server running on port 3000?" : "Sign in failed. Check the server.");
     } finally {
-      setLoading(false);
+      setDevLoading(false);
     }
   }
 
@@ -104,20 +112,23 @@ export default function LoginScreen() {
           variant="primary"
           label="Continue with Google"
           fullWidth
-          loading={loading}
+          loading={googleLoading}
+          disabled={anyLoading}
           onPress={handleGoogleSignIn}
         />
 
         {/* Apple Sign In — required by App Store guidelines (section 4.8)
             when any third-party social login is offered on iOS */}
         {Platform.OS === "ios" && (
-          <AppleAuthentication.AppleAuthenticationButton
-            buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-            buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-            cornerRadius={radius.r16}
-            style={styles.appleButton}
-            onPress={handleAppleSignIn}
-          />
+          <View style={{ opacity: anyLoading ? 0.4 : 1 }}>
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+              cornerRadius={radius.r16}
+              style={styles.appleButton}
+              onPress={handleAppleSignIn}
+            />
+          </View>
         )}
 
         {__DEV__ && (
@@ -146,7 +157,8 @@ export default function LoginScreen() {
               variant="secondary"
               label="Sign in (dev)"
               fullWidth
-              loading={loading}
+              loading={devLoading}
+              disabled={anyLoading}
               onPress={handleDevSignIn}
             />
           </View>
