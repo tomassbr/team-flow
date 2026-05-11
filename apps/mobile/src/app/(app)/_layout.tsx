@@ -1,24 +1,6 @@
 import { Tabs } from "expo-router";
-import { View, StyleSheet } from "react-native";
-import { colors, spacing } from "@team-flow/shared";
-
-function DashboardIcon({ color }: { color: string }) {
-  return (
-    <View style={[styles.iconDot, { backgroundColor: color, borderRadius: 4 }]} />
-  );
-}
-
-function BookingsIcon({ color }: { color: string }) {
-  return (
-    <View style={[styles.iconDot, { backgroundColor: color, borderRadius: 8 }]} />
-  );
-}
-
-function SettingsIcon({ color }: { color: string }) {
-  return (
-    <View style={[styles.iconDot, { backgroundColor: color, borderRadius: 2 }]} />
-  );
-}
+import { Ionicons } from "@expo/vector-icons";
+import { colors } from "@team-flow/shared";
 
 export default function AppLayout() {
   return (
@@ -42,37 +24,37 @@ export default function AppLayout() {
         name="dashboard/index"
         options={{
           title: "Desks",
-          tabBarIcon: ({ color }) => <DashboardIcon color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="grid-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="dashboard/book"
-        options={{
-          href: null, // hidden from tab bar — opened programmatically
-        }}
+        options={{ href: null }}
       />
       <Tabs.Screen
         name="reservations/index"
         options={{
           title: "My Bookings",
-          tabBarIcon: ({ color }) => <BookingsIcon color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings/index"
         options={{
           title: "Settings",
-          tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
         }}
+      />
+      <Tabs.Screen
+        name="admin/desks"
+        options={{ href: null }}
       />
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  iconDot: {
-    width: 20,
-    height: 20,
-    marginBottom: spacing.s4,
-  },
-});
