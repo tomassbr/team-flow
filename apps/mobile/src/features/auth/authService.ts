@@ -166,8 +166,10 @@ export const authService = {
     const token = await SecureStore.getItemAsync(SESSION_TOKEN_KEY);
     if (!token) return null;
 
+    // Authorization: Bearer místo Cookie — iOS NSHTTPCookieStorage může
+    // modifikovat Cookie header a přidávat nepotřebné hodnoty.
     const response = await fetch(`${API_BASE_URL}/api/auth/mobile/session`, {
-      headers: { Cookie: `${SESSION_COOKIE_NAME}=${token}` },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!response.ok) return null;
