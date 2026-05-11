@@ -16,7 +16,10 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "typecheck:mobile": "tsc --noEmit --project apps/mobile/tsconfig.json",
-    "mobile": "expo start --project-root apps/mobile"
+    "mobile": "npm run ios --workspace=mobile",
+    "mobile:start": "cd apps/mobile && npx expo start",
+    "mobile:ios": "cd apps/mobile && npx expo run:ios",
+    "mobile:android": "cd apps/mobile && npx expo run:android"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
