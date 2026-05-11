@@ -5,10 +5,11 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { Avatar } from "./Avatar";
-import { colors, spacing, radius, rnShadows } from "@team-flow/shared";
+import { colors, spacing, radius, rnShadows, gradient } from "@team-flow/shared";
 import type { DeskStatus } from "@team-flow/shared";
 
 interface DeskCardProps {
@@ -30,6 +31,40 @@ export function DeskCard({ name, status, user, userImage, onPress, style }: Desk
     transform: [{ scale: scale.value }],
   }));
 
+  const cardContent = (
+    <>
+      {/* Horní řada: ikona/avatar + status badge */}
+      <View style={styles.topRow}>
+        {isBooked ? (
+          <Avatar name={user ?? "?"} src={userImage} size={40} />
+        ) : (
+          <View style={styles.iconWrap}>
+            <Ionicons name="desktop-outline" size={18} color="#63748C" />
+          </View>
+        )}
+
+        {isBooked ? (
+          <View style={styles.badgeBooked}>
+            <View style={styles.badgeDot} />
+            <Text variant="micro" style={styles.badgeTextBooked}>Booked</Text>
+          </View>
+        ) : (
+          <View style={styles.badgeAvailable}>
+            <Text variant="micro" style={styles.badgeTextAvailable}>Available</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Dolní řada: název stolu + obsazující uživatel */}
+      <View style={styles.bottomRow}>
+        <Text variant="bodyStrong" numberOfLines={1}>{name}</Text>
+        {isBooked && user ? (
+          <Text variant="micro" color="secondary" numberOfLines={1}>{user}</Text>
+        ) : null}
+      </View>
+    </>
+  );
+
   return (
     <AnimatedPressable
       onPress={onPress}
@@ -38,37 +73,20 @@ export function DeskCard({ name, status, user, userImage, onPress, style }: Desk
       disabled={isBooked || !onPress}
       style={[animatedStyle, style]}
     >
-      <View style={[styles.card, isBooked ? styles.cardBooked : styles.cardAvailable]}>
-        {/* Top row: icon/avatar + status badge */}
-        <View style={styles.topRow}>
-          {isBooked ? (
-            <Avatar name={user ?? "?"} src={userImage} size={40} />
-          ) : (
-            <View style={styles.iconWrap}>
-              <Ionicons name="desktop-outline" size={18} color="#63748C" />
-            </View>
-          )}
-
-          {isBooked ? (
-            <View style={styles.badgeBooked}>
-              <View style={styles.badgeDot} />
-              <Text variant="micro" style={styles.badgeTextBooked}>Booked</Text>
-            </View>
-          ) : (
-            <View style={styles.badgeAvailable}>
-              <Text variant="micro" style={styles.badgeTextAvailable}>Available</Text>
-            </View>
-          )}
+      {isBooked ? (
+        <LinearGradient
+          colors={gradient.deskBooked.colors}
+          start={{ x: 0.15, y: 0 }}
+          end={{ x: 0.85, y: 1 }}
+          style={[styles.card, styles.cardBooked]}
+        >
+          {cardContent}
+        </LinearGradient>
+      ) : (
+        <View style={[styles.card, styles.cardAvailable]}>
+          {cardContent}
         </View>
-
-        {/* Bottom row: desk name + occupant */}
-        <View style={styles.bottomRow}>
-          <Text variant="bodyStrong" numberOfLines={1}>{name}</Text>
-          {isBooked && user ? (
-            <Text variant="micro" color="secondary" numberOfLines={1}>{user}</Text>
-          ) : null}
-        </View>
-      </View>
+      )}
     </AnimatedPressable>
   );
 }
@@ -86,9 +104,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.9)",
   },
-  // Approximation of web gradient: linear-gradient(135deg, #C6D1FF → #CFFAFF → #FFF)
   cardBooked: {
-    backgroundColor: "#D8E3FF",
     borderWidth: 1,
     borderColor: "rgba(198,209,255,0.6)",
   },
