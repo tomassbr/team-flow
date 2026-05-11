@@ -31,14 +31,29 @@ async function exchangeForSession(
   endpoint: string,
   body: Record<string, unknown>
 ): Promise<MobileAuthResponse | null> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
 
-  if (!response.ok) return null;
-  return response.json();
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => "");
+      console.error(`[auth] ${endpoint} returned ${response.status}:`, text);
+      return null;
+    }
+    return response.json();
+  } catch (e) {
+    console.error(`[auth] fetch ${endpoint} failed:`, e);
+    throw e;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export const authService = {
@@ -127,24 +142,10 @@ export const authService = {
 
   /** Dev credentials sign-in — only available in __DEV__ builds. */
   async signInWithCredentials(email: string, password: string): Promise<boolean> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/callback/credentials`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, csrfToken: "" }),
-    });
-
-    // NextAuth returns the session token in a cookie on success
-    const setCookieHeader = response.headers.get("set-cookie");
-    if (setCookieHeader) {
-      // Extract the token value from: "authjs.session-token=<token>; Path=/; ..."
-      const match = setCookieHeader.match(/authjs\.session-token=([^;]+)/);
-      if (match?.[1]) {
-        await storeSessionToken(match[1]);
-        return true;
-      }
-    }
-
-    return false;
+    const data = await exchangeForSession("/api/auth/mobile/dev", { email, password });
+    if (!data) return false;
+    await storeSessionToken(data.sessionToken);
+    return true;
   },
 
   /** Validate the stored session token against the backend. */
