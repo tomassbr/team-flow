@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Team Flow — Mobile Screens Preview</title>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #E5E7EB;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 40px;
+    min-height: 100vh;
+  }
+
+  /* ── Phone frame ── */
+  .frame {
+    width: 393px;
+    min-height: 852px;
+    background: #F3F5F9;
+    border-radius: 48px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.18), 0 0 0 2px #1A1A1A inset;
+  }
+
+  /* ── Status bar ── */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0F172A;
+    background: transparent;
+    position: relative;
+    z-index: 10;
+  }
+  .status-bar .notch {
+    width: 120px;
+    height: 34px;
+    background: #1A1A1A;
+    border-radius: 0 0 20px 20px;
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+  }
+  .status-bar .time { font-size: 15px; font-weight: 600; }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons span { font-size: 11px; }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    display: flex;
+    background: #FFFFFF;
+    border-top: 1px solid #F1F5F9;
+    padding: 8px 0 20px;
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tab-icon svg { width: 22px; height: 22px; }
+  .tab-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #64748B;
+  }
+  .tab.active .tab-label { color: #6366F1; }
+  .tab.active svg { stroke: #6366F1; }
+  .tab svg { stroke: #64748B; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── Content area ── */
+  .content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Typography ── */
+  .display  { font-size: 30px; font-weight: 500; letter-spacing: -0.75px; color: #0F172A; }
+  .h1       { font-size: 24px; font-weight: 500; letter-spacing: -0.6px; color: #0F172A; }
+  .h2       { font-size: 20px; font-weight: 500; letter-spacing: -0.5px; color: #0F172A; }
+  .body     { font-size: 16px; font-weight: 400; color: #0F172A; }
+  .body-strong { font-size: 16px; font-weight: 500; color: #0F172A; }
+  .caption  { font-size: 14px; font-weight: 400; color: #475569; }
+  .micro    { font-size: 12px; font-weight: 500; color: #64748B; }
+  .muted    { color: #64748B; }
+  .secondary { color: #475569; }
+
+  /* ── Buttons ── */
+  .btn {
+    height: 48px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+  }
+  .btn-primary { background: #0F172A; color: #FFFFFF; }
+  .btn-apple   { background: #000000; color: #FFFFFF; }
+  .btn-secondary { background: transparent; color: #0F172A; border: 1px solid #CBD5E1; }
+  .btn-gradient {
+    background: linear-gradient(135deg, #6366F1 0%, #06B6D4 100%);
+    color: #FFFFFF;
+  }
+
+  /* ── Avatar ── */
+  .avatar {
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+    color: #FFFFFF;
+  }
+  .avatar-cyan  { background: #06B6D4; }
+  .avatar-indigo { background: #6366F1; }
+  .avatar-rose  { background: #F43F5E; }
+  .avatar-amber { background: #F59E0B; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-available { background: rgba(237,253,244,0.9); border: 1px solid rgba(166,243,208,0.5); color: #059669; }
+  .badge-booked    { background: rgba(237,241,255,0.9); border: 1px solid rgba(198,209,255,0.6); color: #6366F1; }
+  .badge-dot { width: 6px; height: 6px; border-radius: 9999px; background: currentColor; flex-shrink: 0; }
+  .badge-reserved  { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); color: #6366F1; }
+  .badge-free      { background: #F1F5F9; color: #64748B; }
+  .badge-admin     { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); color: #6366F1; }
+
+  /* ── Cards ── */
+  .card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .card-sm {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  /* ── Desk card ── */
+  .desk-card {
+    border-radius: 24px;
+    padding: 16px;
+    min-height: 148px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .desk-card-available { background: rgba(255,255,255,0.97); border: 1px solid rgba(255,255,255,0.9); }
+  .desk-card-booked { background: linear-gradient(135deg, #C6D1FF 0%, #CFFAFF 50%, #FFFFFF 100%); border: 1px solid rgba(198,209,255,0.6); }
+  .desk-card-add { background: transparent; border: 2px dashed #CBD5E1; align-items: center; justify-content: center; gap: 10px; }
+  .desk-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .desk-bottom { display: flex; flex-direction: column; gap: 3px; }
+  .desk-icon-wrap {
+    width: 40px; height: 40px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.8);
+    border: 1px solid #FFF;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .desk-icon-wrap svg { width: 18px; height: 18px; stroke: #63748C; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── Logo mark ── */
+  .logo-mark {
+    width: 72px; height: 72px;
+    border-radius: 20px;
+    background: #6366F1;
+    display: flex; align-items: center; justify-content: center;
+    color: #FFF; font-size: 24px; font-weight: 600;
+  }
+
+  /* ── Date strip ── */
+  .date-strip {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+    overflow: hidden;
+  }
+  .date-day {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 2px;
+    border-radius: 12px;
+  }
+  .date-day.active { background: #6366F1; }
+  .date-day .day-name { font-size: 10px; font-weight: 500; color: #64748B; }
+  .date-day.active .day-name { color: rgba(255,255,255,0.7); }
+  .date-day .day-num { font-size: 16px; font-weight: 600; color: #0F172A; }
+  .date-day.active .day-num { color: #FFFFFF; }
+
+  /* ── Filter pills ── */
+  .filter-pills {
+    display: flex;
+    gap: 2px;
+    background: #F8FAFC;
+    border-radius: 9999px;
+    padding: 3px;
+  }
+  .filter-pill {
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748B;
+  }
+  .filter-pill.active {
+    background: #FFFFFF;
+    color: #0F172A;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  /* ── Week progress bar ── */
+  .progress-bar-bg {
+    height: 6px;
+    background: #F1F5F9;
+    border-radius: 9999px;
+    overflow: hidden;
+    flex: 1;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: #6366F1;
+    border-radius: 9999px;
+  }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: #F1F5F9; margin: 12px 0; }
+
+  /* ── Row ── */
+  .row { display: flex; align-items: center; }
+  .row-between { display: flex; align-items: center; justify-content: space-between; }
+
+  /* ── Input ── */
+  .input-field {
+    background: #F8FAFC;
+    border: 1px solid #F1F5F9;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 16px;
+    color: #64748B;
+    width: 100%;
+  }
+
+  /* ── Desk list row ── */
+  .desk-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .desk-row-left { display: flex; align-items: center; gap: 12px; }
+  .desk-row-left svg { width: 18px; height: 18px; stroke: #94A3B8; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .trash-icon svg { width: 18px; height: 18px; stroke: #EF4444; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── Dashboard gradient bg ── */
+  .dashboard-bg {
+    background: linear-gradient(180deg, #EEF2FF 0%, #F3F5F9 50%);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Add panel ── */
+  .add-panel {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* ── Nav header ── */
+  .nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #F1F5F9;
+  }
+  .nav-header svg { width: 24px; height: 24px; stroke: #0F172A; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-icon-add svg { stroke: #6366F1; }
+
+  /* screen label below each frame */
+  .screen-label {
+    text-align: center;
+    margin-top: 12px;
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748B;
+  }
+
+  .frame-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 1: Login -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="frame-wrap">
+<div class="frame" id="s1-login">
+  <div class="status-bar">
+    <div class="notch"></div>
+    <span class="time">9:41</span>
+    <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+  <div class="content" style="padding: 24px; justify-content: center; gap: 16px; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 32px;">
+      <div class="logo-mark">TF</div>
+      <p class="display">Team Flow</p>
+      <p class="body muted" style="text-align: center;">Desk booking for hybrid teams</p>
+    </div>
+
+    <button class="btn btn-primary">
+      <svg style="width:18px;height:18px;margin-right:10px;fill:none;stroke:white;stroke-width:2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Continue with Google
+    </button>
+
+    <button class="btn btn-apple">
+      <svg style="width:18px;height:18px;margin-right:10px;fill:white" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Sign in with Apple
+    </button>
+
+    <div style="height: 1px; background: #F1F5F9; margin: 4px 0;"></div>
+    <p class="micro" style="text-align: center;">By continuing, you agree to our Terms of Service</p>
+  </div>
+</div>
+<p class="screen-label">Login</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 2: Dashboard -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="frame-wrap">
+<div class="frame" id="s2-dashboard">
+  <div class="status-bar">
+    <div class="notch"></div>
+    <span class="time">9:41</span>
+    <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+  <div class="content dashboard-bg">
+    <!-- Date strip -->
+    <div class="date-strip">
+      <div class="date-day"><span class="day-name">MON</span><span class="day-num">11</span></div>
+      <div class="date-day active"><span class="day-name">TUE</span><span class="day-num">12</span></div>
+      <div class="date-day"><span class="day-name">WED</span><span class="day-num">13</span></div>
+      <div class="date-day"><span class="day-name">THU</span><span class="day-num">14</span></div>
+      <div class="date-day"><span class="day-name">FRI</span><span class="day-num">15</span></div>
+      <div class="date-day"><span class="day-name">SAT</span><span class="day-num">16</span></div>
+      <div class="date-day"><span class="day-name">SUN</span><span class="day-num">17</span></div>
+    </div>
+
+    <!-- Who's in today -->
+    <div style="padding: 0 16px 12px; display: flex; flex-direction: column; gap: 8px;">
+      <p class="micro">IN TODAY</p>
+      <div class="row" style="gap: 8px;">
+        <div class="avatar avatar-cyan" style="width:32px;height:32px;font-size:12px;">D</div>
+        <div class="avatar avatar-rose" style="width:32px;height:32px;font-size:12px;">A</div>
+        <div class="avatar avatar-amber" style="width:32px;height:32px;font-size:12px;">B</div>
+      </div>
+    </div>
+
+    <!-- Filter row -->
+    <div class="row-between" style="padding: 0 16px 12px;">
+      <p class="body-strong">Workspace</p>
+      <div class="filter-pills">
+        <div class="filter-pill active">All</div>
+        <div class="filter-pill">Available</div>
+      </div>
+    </div>
+
+    <!-- Desk grid -->
+    <div style="padding: 0 16px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1;">
+      <!-- Available card -->
+      <div class="desk-card desk-card-available">
+        <div class="desk-top">
+          <div class="desk-icon-wrap">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="badge badge-available">Available</div>
+        </div>
+        <div class="desk-bottom">
+          <p class="body-strong">Window Spot 01</p>
+        </div>
+      </div>
+
+      <!-- Booked card -->
+      <div class="desk-card desk-card-booked">
+        <div class="desk-top">
+          <div class="avatar avatar-indigo" style="width:40px;height:40px;font-size:14px;">D</div>
+          <div class="badge badge-booked"><span class="badge-dot"></span>Booked</div>
+        </div>
+        <div class="desk-bottom">
+          <p class="body-strong">Standing Desk</p>
+          <p class="micro secondary">Dev User</p>
+        </div>
+      </div>
+
+      <!-- Available card 2 -->
+      <div class="desk-card desk-card-available">
+        <div class="desk-top">
+          <div class="desk-icon-wrap">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="badge badge-available">Available</div>
+        </div>
+        <div class="desk-bottom">
+          <p class="body-strong">Meeting Pod A</p>
+        </div>
+      </div>
+
+      <!-- Add new desk card -->
+      <div class="desk-card desk-card-add">
+        <div style="width:40px;height:40px;border-radius:9999px;border:2px solid #06B6D4;display:flex;align-items:center;justify-content:center;">
+          <svg style="width:20px;height:20px;stroke:#06B6D4;fill:none;stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <p class="body" style="color:#06B6D4;font-weight:500;">Add New Desk</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <div class="tab active">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+      <span class="tab-label">Desks</span>
+    </div>
+    <div class="tab">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <span class="tab-label">My Bookings</span>
+    </div>
+    <div class="tab">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span class="tab-label">Settings</span>
+    </div>
+  </div>
+</div>
+<p class="screen-label">Dashboard — Desks</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 3: My Bookings -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="frame-wrap">
+<div class="frame" id="s3-bookings">
+  <div class="status-bar">
+    <div class="notch"></div>
+    <span class="time">9:41</span>
+    <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+  <div class="content" style="overflow-y: auto;">
+    <div style="padding: 8px 24px 16px;">
+      <p class="h1">My Bookings</p>
+    </div>
+    <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 16px;">
+      <!-- This Week panel -->
+      <div class="card" style="border-radius: 24px; gap: 14px; display: flex; flex-direction: column;">
+        <p class="body-strong">This Week</p>
+
+        <div class="row-between" style="gap: 12px;">
+          <div style="min-width: 90px;"><p class="body-strong" style="font-size:14px;">Today</p><p class="micro muted">Tue, 12 May</p></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:50%"></div></div>
+          <p class="micro" style="color:#6366F1;min-width:52px;text-align:right;">50% Full</p>
+        </div>
+        <div class="row-between" style="gap: 12px;">
+          <div style="min-width: 90px;"><p class="body-strong" style="font-size:14px;">Tomorrow</p><p class="micro muted">Wed, 13 May</p></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:0%"></div></div>
+          <p class="micro muted" style="min-width:52px;text-align:right;">0% Full</p>
+        </div>
+        <div class="row-between" style="gap: 12px;">
+          <div style="min-width: 90px;"><p class="body-strong" style="font-size:14px;">Wed</p><p class="micro muted">Thu, 14 May</p></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:0%"></div></div>
+          <p class="micro muted" style="min-width:52px;text-align:right;">0% Full</p>
+        </div>
+        <div class="row-between" style="gap: 12px;">
+          <div style="min-width: 90px;"><p class="body-strong" style="font-size:14px;">Thu</p><p class="micro muted">Fri, 15 May</p></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:0%"></div></div>
+          <p class="micro muted" style="min-width:52px;text-align:right;">0% Full</p>
+        </div>
+        <div class="row-between" style="gap: 12px;">
+          <div style="min-width: 90px;"><p class="body-strong" style="font-size:14px;">Fri</p><p class="micro muted">Sat, 16 May</p></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:0%"></div></div>
+          <p class="micro muted" style="min-width:52px;text-align:right;">0% Full</p>
+        </div>
+      </div>
+
+      <!-- My Reservations -->
+      <div>
+        <p class="body-strong" style="margin-bottom: 10px;">My Reservations</p>
+        <div class="card-sm row-between">
+          <div class="row" style="gap: 12px;">
+            <svg style="width:18px;height:18px;stroke:#94A3B8;fill:none;stroke-width:1.5;stroke-linecap:round;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <div>
+              <p class="body-strong" style="font-size:15px;">Standing Desk</p>
+              <p class="micro muted">Tue, 12 May</p>
+            </div>
+          </div>
+          <div class="badge badge-reserved">Reserved</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+      <span class="tab-label">Desks</span>
+    </div>
+    <div class="tab active">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <span class="tab-label">My Bookings</span>
+    </div>
+    <div class="tab">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span class="tab-label">Settings</span>
+    </div>
+  </div>
+</div>
+<p class="screen-label">My Bookings</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 4: Settings -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="frame-wrap">
+<div class="frame" id="s4-settings">
+  <div class="status-bar">
+    <div class="notch"></div>
+    <span class="time">9:41</span>
+    <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+  <div class="content" style="padding: 8px 16px 16px; gap: 16px; display: flex; flex-direction: column;">
+    <p class="h1" style="padding: 0 8px;">Settings</p>
+
+    <!-- Profile card -->
+    <div class="card" style="display: flex; flex-direction: column; gap: 0;">
+      <div class="row" style="gap: 16px; margin-bottom: 14px;">
+        <div class="avatar avatar-cyan" style="width:64px;height:64px;font-size:22px;flex-shrink:0;">D</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <p class="body-strong">Dev User</p>
+          <p class="micro muted">dev@teamflow.local</p>
+          <div class="badge badge-admin" style="align-self:flex-start;margin-top:2px;">Admin</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workspace card -->
+    <div class="card" style="display: flex; flex-direction: column;">
+      <p class="micro" style="margin-bottom: 8px;">WORKSPACE</p>
+      <div class="row-between" style="margin-bottom: 4px;">
+        <p class="body-strong">My Company</p>
+        <div class="badge badge-free">FREE</div>
+      </div>
+      <div class="divider"></div>
+      <button class="btn btn-secondary" style="margin-top: 4px;">Sign Out</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+      <span class="tab-label">Desks</span>
+    </div>
+    <div class="tab">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <span class="tab-label">My Bookings</span>
+    </div>
+    <div class="tab active">
+      <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span class="tab-label">Settings</span>
+    </div>
+  </div>
+</div>
+<p class="screen-label">Settings</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 5: Manage Desks (Admin) -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="frame-wrap">
+<div class="frame" id="s5-admin">
+  <div class="status-bar">
+    <div class="notch"></div>
+    <span class="time">9:41</span>
+    <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+  <div class="content">
+    <!-- Nav header -->
+    <div class="nav-header">
+      <div><svg style="width:24px;height:24px;stroke:#0F172A;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <p class="h2">Manage Desks</p>
+      <div class="nav-icon-add"><svg style="width:28px;height:28px;stroke:#6366F1;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+    </div>
+
+    <!-- Add panel (visible) -->
+    <div style="padding: 12px 16px 0;">
+      <div class="add-panel">
+        <div class="input-field">Desk name (e.g. Window Spot 01)</div>
+        <div class="row" style="gap: 8px;">
+          <button class="btn btn-secondary" style="flex: 1; height: 40px; font-size: 14px;">Cancel</button>
+          <button class="btn btn-gradient" style="flex: 2; height: 40px; font-size: 14px;">Add Desk</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desk list -->
+    <div style="padding: 12px 16px; display: flex; flex-direction: column; gap: 8px;">
+      <div class="desk-row">
+        <div class="desk-row-left">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <p class="body-strong">Window Spot 01</p>
+        </div>
+        <div class="trash-icon"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></div>
+      </div>
+      <div class="desk-row">
+        <div class="desk-row-left">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <p class="body-strong">Standing Desk</p>
+        </div>
+        <div class="trash-icon"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></div>
+      </div>
+      <div class="desk-row">
+        <div class="desk-row-left">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <p class="body-strong">Meeting Pod A</p>
+        </div>
+        <div class="trash-icon"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="screen-label">Manage Desks (Admin)</p>
+</div>
+
+</body>
+</html>
