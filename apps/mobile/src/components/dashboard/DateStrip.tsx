@@ -1,9 +1,9 @@
 import React from "react";
-import { FlatList, Pressable } from "react-native";
+import { View, Pressable, StyleSheet } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { makeStyleSheet } from "@/theme";
 import { toDayAbbrev } from "@/lib/date";
-import { addDays, isSameDay, isToday } from "date-fns";
+import { addDays, isSameDay } from "date-fns";
+import { colors, spacing, radius } from "@team-flow/shared";
 
 interface DateStripProps {
   selectedDate: Date;
@@ -14,51 +14,72 @@ function generateDays(count = 7): Date[] {
   return Array.from({ length: count }, (_, i) => addDays(new Date(), i));
 }
 
-const useStyles = makeStyleSheet((theme) => ({
-  container: {
-    paddingHorizontal: theme.spacing.s16,
-    paddingVertical: theme.spacing.s12,
-    gap: theme.spacing.s8,
-  },
-  day: {
-    width: 48,
-    height: 64,
-    borderRadius: theme.radius.r16,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-    gap: theme.spacing.s4,
-    backgroundColor: theme.colors.surface.level1,
-  },
-  daySelected: {
-    backgroundColor: theme.colors.accent.primary,
-  },
-}));
-
 export function DateStrip({ selectedDate, onDateChange }: DateStripProps) {
-  const styles = useStyles();
   const days = generateDays(7);
 
   return (
-    <FlatList
-      data={days}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.container}
-      keyExtractor={(d) => d.toISOString()}
-      renderItem={({ item: date }) => {
+    <View style={styles.container}>
+      {days.map((date) => {
         const isSelected = isSameDay(date, selectedDate);
-        const isNow = isToday(date);
         return (
-          <Pressable onPress={() => onDateChange(date)} style={[styles.day, isSelected && styles.daySelected]}>
-            <Text variant="micro" color={isSelected ? "onAccent" : "muted"}>
+          <Pressable
+            key={date.toISOString()}
+            onPress={() => onDateChange(date)}
+            style={[styles.day, isSelected && styles.daySelected]}
+          >
+            <Text
+              variant="micro"
+              style={[styles.label, isSelected && styles.labelSelected]}
+            >
               {toDayAbbrev(date).toUpperCase()}
             </Text>
-            <Text variant="bodyStrong" color={isSelected ? "onAccent" : isNow ? "accent" : "primary"}>
+            <Text
+              variant="bodyStrong"
+              style={[styles.number, isSelected && styles.numberSelected]}
+            >
               {date.getDate()}
             </Text>
           </Pressable>
         );
-      }}
-    />
+      })}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    paddingHorizontal: spacing.s16,
+    paddingVertical: spacing.s12,
+    gap: spacing.s4,
+  },
+  day: {
+    flex: 1,
+    height: 46,
+    borderRadius: radius.r12,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.s4,
+  },
+  daySelected: {
+    backgroundColor: colors.accent.primary,
+  },
+  label: {
+    fontSize: 10,
+    fontWeight: "500",
+    color: colors.text.muted,
+    lineHeight: 12,
+  },
+  labelSelected: {
+    color: "rgba(255,255,255,0.7)",
+  },
+  number: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text.primary,
+    lineHeight: 20,
+  },
+  numberSelected: {
+    color: "#FFFFFF",
+  },
+});
