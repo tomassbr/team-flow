@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@team-flow/shared";
+import { GradientTabBarIcon, GradientTabLabel } from "@/components/ui/GradientTabIcon";
 
 export default function AppLayout() {
   return (
@@ -13,19 +13,17 @@ export default function AppLayout() {
           borderTopColor: colors.border.subtle,
           borderTopWidth: 1,
         },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: "500",
-        },
         headerShown: false,
       }}
     >
       <Tabs.Screen
         name="dashboard/index"
         options={{
-          title: "Desks",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="grid-outline" size={size} color={color} />
+          tabBarIcon: ({ focused }) => (
+            <GradientTabBarIcon name="grid-outline" focused={focused} />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <GradientTabLabel label="Desks" focused={focused} />
           ),
         }}
       />
@@ -36,18 +34,22 @@ export default function AppLayout() {
       <Tabs.Screen
         name="reservations/index"
         options={{
-          title: "My Bookings",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar-outline" size={size} color={color} />
+          tabBarIcon: ({ focused }) => (
+            <GradientTabBarIcon name="calendar-outline" focused={focused} />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <GradientTabLabel label="My Bookings" focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
         name="settings/index"
         options={{
-          title: "Settings",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+          tabBarIcon: ({ focused }) => (
+            <GradientTabBarIcon name="person-outline" focused={focused} />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <GradientTabLabel label="Settings" focused={focused} />
           ),
         }}
       />
