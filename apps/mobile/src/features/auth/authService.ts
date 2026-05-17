@@ -70,6 +70,12 @@ export const authService = {
    * Requires: EXPO_PUBLIC_GOOGLE_CLIENT_ID + GOOGLE_MOBILE_CLIENT_ID on backend
    */
   async signInWithGoogle(): Promise<boolean> {
+    if (!GOOGLE_CLIENT_ID) {
+      throw new Error(
+        "EXPO_PUBLIC_GOOGLE_CLIENT_ID is not set. See apps/mobile/.env"
+      );
+    }
+
     const googleDiscovery = await AuthSession.fetchDiscoveryAsync(
       "https://accounts.google.com"
     );

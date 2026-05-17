@@ -1,5 +1,11 @@
 import React from "react";
-import { Pressable, View, StyleSheet, ViewStyle } from "react-native";
+import {
+  Pressable,
+  View,
+  Text,
+  StyleSheet,
+  ViewStyle,
+} from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,9 +13,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import { Text } from "./Text";
 import { Avatar } from "./Avatar";
-import { colors, spacing, radius, rnShadows, gradient } from "@team-flow/shared";
+import { colors, spacing, radius, rnShadows } from "@team-flow/shared";
 import type { DeskStatus } from "@team-flow/shared";
 
 interface DeskCardProps {
@@ -33,34 +38,37 @@ export function DeskCard({ name, status, user, userImage, onPress, style }: Desk
 
   const cardContent = (
     <>
-      {/* Horní řada: ikona/avatar + status badge */}
+      {/* Horní řada */}
       <View style={styles.topRow}>
         {isBooked ? (
-          <Avatar name={user ?? "?"} src={userImage} size={40} />
+          <View style={styles.avatarWrap}>
+            <Avatar name={user ?? "?"} src={userImage} size={40} />
+          </View>
         ) : (
           <View style={styles.iconWrap}>
             <Ionicons name="desktop-outline" size={18} color="#63748C" />
           </View>
         )}
 
-        {isBooked ? (
+        {isBooked && (
           <View style={styles.badgeBooked}>
             <View style={styles.badgeDot} />
-            <Text variant="micro" style={styles.badgeTextBooked}>Booked</Text>
-          </View>
-        ) : (
-          <View style={styles.badgeAvailable}>
-            <Text variant="micro" style={styles.badgeTextAvailable}>Available</Text>
+            <Text style={styles.badgeTextBooked}>Booked</Text>
           </View>
         )}
       </View>
 
-      {/* Dolní řada: název stolu + obsazující uživatel */}
+      {/* Dolní řada */}
       <View style={styles.bottomRow}>
-        <Text variant="bodyStrong" numberOfLines={1}>{name}</Text>
-        {isBooked && user ? (
-          <Text variant="micro" color="secondary" numberOfLines={1}>{user}</Text>
-        ) : null}
+        <Text style={styles.deskName} numberOfLines={1}>{name}</Text>
+        {isBooked ? (
+          <Text style={styles.userName} numberOfLines={1}>{user ?? ""}</Text>
+        ) : (
+          <View style={styles.badgeAvailable}>
+            <View style={styles.availableDot} />
+            <Text style={styles.badgeTextAvailable}>Available</Text>
+          </View>
+        )}
       </View>
     </>
   );
@@ -68,14 +76,18 @@ export function DeskCard({ name, status, user, userImage, onPress, style }: Desk
   return (
     <AnimatedPressable
       onPress={onPress}
-      onPressIn={() => { scale.value = withSpring(0.97, { damping: 15, stiffness: 300 }); }}
-      onPressOut={() => { scale.value = withSpring(1, { damping: 15, stiffness: 300 }); }}
+      onPressIn={() => {
+        if (onPress) scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+      }}
       disabled={isBooked || !onPress}
       style={[animatedStyle, style]}
     >
       {isBooked ? (
         <LinearGradient
-          colors={gradient.deskBooked.colors}
+          colors={["rgba(199,210,254,0.6)", "rgba(207,250,254,0.4)", "rgba(255,255,255,0.2)"]}
           start={{ x: 0.15, y: 0 }}
           end={{ x: 0.85, y: 1 }}
           style={[styles.card, styles.cardBooked]}
@@ -93,25 +105,31 @@ export function DeskCard({ name, status, user, userImage, onPress, style }: Desk
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: radius.r24,
-    padding: spacing.s16,
-    minHeight: 148,
+    borderRadius: radius.r28,
+    padding: spacing.s24,
+    minHeight: 180,
     justifyContent: "space-between",
-    ...rnShadows.e3,
   },
   cardAvailable: {
     backgroundColor: "rgba(255,255,255,0.97)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.9)",
+    ...rnShadows.e2,
   },
   cardBooked: {
     borderWidth: 1,
-    borderColor: "rgba(198,209,255,0.6)",
+    borderColor: "rgba(199,210,254,0.4)",
+    ...rnShadows.e2,
   },
   topRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
+  },
+  avatarWrap: {
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,1)",
+    borderRadius: radius.full,
   },
   iconWrap: {
     width: 40,
@@ -127,13 +145,12 @@ const styles = StyleSheet.create({
   badgeBooked: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.s4,
-    paddingHorizontal: spacing.s12,
-    paddingVertical: spacing.s4,
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: radius.full,
-    backgroundColor: "rgba(237,241,255,0.9)",
-    borderWidth: 1,
-    borderColor: "rgba(198,209,255,0.6)",
+    backgroundColor: "rgba(255,255,255,0.6)",
+    ...rnShadows.e1,
   },
   badgeDot: {
     width: 6,
@@ -142,20 +159,43 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent.primary,
   },
   badgeTextBooked: {
+    fontSize: 12,
     color: colors.accent.primary,
   },
+  bottomRow: {
+    gap: spacing.s8,
+  },
+  deskName: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: colors.text.primary,
+    lineHeight: 22,
+  },
+  userName: {
+    fontSize: 12,
+    color: colors.accent.primary,
+    lineHeight: 16,
+  },
   badgeAvailable: {
-    paddingHorizontal: spacing.s12,
-    paddingVertical: spacing.s4,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    alignSelf: "flex-start",
+    paddingHorizontal: 11,
+    paddingVertical: 5,
     borderRadius: radius.full,
-    backgroundColor: "rgba(237,253,244,0.9)",
+    backgroundColor: "rgba(236,253,245,0.8)",
     borderWidth: 1,
-    borderColor: "rgba(166,243,208,0.5)",
+    borderColor: "rgba(167,243,208,0.5)",
+  },
+  availableDot: {
+    width: 6,
+    height: 6,
+    borderRadius: radius.full,
+    backgroundColor: "#34D399",
   },
   badgeTextAvailable: {
+    fontSize: 12,
     color: "#059669",
-  },
-  bottomRow: {
-    gap: spacing.s4,
   },
 });
