@@ -29,7 +29,9 @@ interface DeskCardProps {
   icon?: ReactNode;
   variant?: "default" | "addNew";
   isSelected?: boolean;
+  isOwn?: boolean;
   onClick?: () => void;
+  onCancel?: () => void;
 }
 
 export function DeskCard({
@@ -40,7 +42,9 @@ export function DeskCard({
   icon,
   variant = "default",
   isSelected = false,
+  isOwn = false,
   onClick,
+  onCancel,
 }: DeskCardProps) {
   if (variant === "addNew") {
     return (
@@ -138,38 +142,65 @@ export function DeskCard({
 
         {/* Status badge */}
         {isBooked ? (
-          /* Booked chip */
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: tokens.space.s8,
-              padding: `${tokens.space.s4} ${tokens.space.s12}`,
-              borderRadius: tokens.radius.full,
-              background: "rgba(237,241,255,0.8)",
-              border: "1px solid rgba(198,209,255,0.6)",
-              backdropFilter: "blur(4px)",
-              WebkitBackdropFilter: "blur(4px)",
-            }}
-          >
-            <span
+          <div style={{ display: "flex", alignItems: "center", gap: tokens.space.s8 }}>
+            {/* Booked / Yours chip */}
+            <div
               style={{
-                width: 6,
-                height: 6,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: tokens.space.s8,
+                padding: `${tokens.space.s4} ${tokens.space.s12}`,
                 borderRadius: tokens.radius.full,
-                background: tokens.color.accent.primary,
-                flexShrink: 0,
-              }}
-            />
-            <span
-              style={{
-                color: tokens.color.accent.primary,
-                fontSize: tokens.type.micro,
-                fontWeight: 500,
+                background: isOwn ? "rgba(236,253,245,0.8)" : "rgba(237,241,255,0.8)",
+                border: isOwn ? "1px solid rgba(167,243,208,0.5)" : "1px solid rgba(198,209,255,0.6)",
+                backdropFilter: "blur(4px)",
+                WebkitBackdropFilter: "blur(4px)",
               }}
             >
-              Booked
-            </span>
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: tokens.radius.full,
+                  background: isOwn ? tokens.color.status.success : tokens.color.accent.primary,
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  color: isOwn ? tokens.color.status.success : tokens.color.accent.primary,
+                  fontSize: tokens.type.micro,
+                  fontWeight: 500,
+                }}
+              >
+                {isOwn ? "Yours" : "Booked"}
+              </span>
+            </div>
+            {/* Cancel button — only for own bookings */}
+            {isOwn && onCancel && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onCancel(); }}
+                title="Cancel reservation"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 24,
+                  height: 24,
+                  borderRadius: tokens.radius.full,
+                  background: "rgba(239,68,68,0.08)",
+                  border: "1px solid rgba(239,68,68,0.2)",
+                  color: tokens.color.status.error,
+                  cursor: "pointer",
+                  flexShrink: 0,
+                }}
+              >
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            )}
           </div>
         ) : (
           /* Available chip — glass mint, no dot */

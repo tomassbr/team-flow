@@ -9,11 +9,12 @@ import {
   getDashboardReservations,
   getWeekOccupancy,
 } from "@/lib/data/dashboard";
-import type { DeskWithStatus, UserSummary } from "@/types/domain";
+import type { DeskEntry } from "@/types/dashboard";
+import type { UserSummary } from "@/types/domain";
 import type { WeekDay } from "@/lib/data/dashboard";
 
 // Mock data — used for visual preview when no real data exists
-const MOCK_DESKS: DeskWithStatus[] = [
+const MOCK_DESKS: DeskEntry[] = [
   { id: "mock-1", name: "Desk A1", status: "available" },
   { id: "mock-2", name: "Desk A2", status: "booked", user: "Alice Johnson", duration: "All Day" },
   { id: "mock-3", name: "Desk A3", status: "available" },
@@ -47,6 +48,7 @@ export default async function DashboardPage() {
   }
 
   const { companyId } = session.user;
+  const currentUserId = session.user.id;
   const today = new Date();
 
   const [desks, reservations] = await Promise.all([
@@ -58,12 +60,15 @@ export default async function DashboardPage() {
 
   const reservationByDeskId = new Map(reservations.map((r) => [r.deskId, r]));
 
-  const desksWithStatus = desks.map((desk) => {
+  const desksWithStatus: DeskEntry[] = desks.map((desk) => {
     const reservation = reservationByDeskId.get(desk.id);
     return {
-      ...desk,
+      id: desk.id,
+      name: desk.name,
       status: reservation ? ("booked" as const) : ("available" as const),
       user: reservation?.user.name ?? undefined,
+      userId: reservation?.userId ?? undefined,
+      reservationId: reservation?.id ?? undefined,
       duration: reservation ? "All Day" : undefined,
     };
   });
@@ -155,10 +160,11 @@ export default async function DashboardPage() {
 
       {/* Desk grid */}
       <DeskGridClient
-        desks={effectiveDesks}
+        initialDesks={effectiveDesks}
         todayUsers={effectiveUsers}
         weekOccupancy={effectiveWeekOccupancy}
         isAdmin={session.user.role === "ADMIN"}
+        currentUserId={currentUserId}
       />
     </div>
   );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
 import { AdminModeToggle } from "@/components/dashboard/AdminModeToggle";
+import { NavLinks } from "@/components/layouts/NavLinks";
 import { tokens } from "@/styles/tokens.config";
 
 interface AppHeaderProps {
@@ -56,6 +57,8 @@ export function AppHeader({
             {appName}
           </span>
         </Link>
+
+        <NavLinks />
 
         <div style={{ display: "flex", alignItems: "center", gap: tokens.space.s16 }}>
           {variant === "dashboard" && (

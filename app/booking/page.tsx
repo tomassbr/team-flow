@@ -1,4 +1,6 @@
-// TODO: Implement booking page
+import { redirect } from "next/navigation";
+
+// Booking is handled inline on the dashboard (click any available desk)
 export default function BookingPage() {
-  return null;
+  redirect("/dashboard");
 }

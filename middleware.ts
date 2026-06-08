@@ -1,4 +1,9 @@
-export { auth as middleware } from "@/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth.config";
+
+// Use the edge-safe config (no Prisma) so middleware can run in Edge Runtime.
+// The full auth.ts (with PrismaAdapter) is used only in server components and API routes.
+export const { auth: middleware } = NextAuth(authConfig);
 
 export const config = {
   // Middleware runs on all routes EXCEPT:

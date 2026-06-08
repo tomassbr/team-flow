@@ -19,14 +19,16 @@ interface ReservationDrawerProps {
   desk: DeskInfo;
   todayUsers: UserSummary[];
   onClose: () => void;
+  initialDate?: Date;
+  onSuccess?: () => void;
 }
 
-export function ReservationDrawer({ desk, todayUsers, onClose }: ReservationDrawerProps) {
+export function ReservationDrawer({ desk, todayUsers, onClose, initialDate, onSuccess }: ReservationDrawerProps) {
   const router = useRouter();
   const today = new Date();
   const tomorrow = addDays(today, 1);
 
-  const [selectedDate, setSelectedDate] = useState<Date>(today);
+  const [selectedDate, setSelectedDate] = useState<Date>(initialDate ?? today);
   const [customDate, setCustomDate] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -41,9 +43,13 @@ export function ReservationDrawer({ desk, todayUsers, onClose }: ReservationDraw
       await createReservation(desk.id, dateStr);
       setSuccess(true);
       setTimeout(() => {
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          router.refresh();
+        }
         onClose();
-        router.refresh();
-      }, 1200);
+      }, 1000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     }
