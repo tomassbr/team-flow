@@ -13,6 +13,7 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
+import { NavHeader } from "@/components/ui/NavHeader";
 import { useDesksQuery, useCreateDesk, useDeleteDesk } from "@/features/desks/useDesksQuery";
 import { colors, spacing, radius, rnShadows } from "@team-flow/shared";
 
@@ -53,15 +54,12 @@ export default function AdminDesksScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
-          <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
-        </Pressable>
-        <Text variant="h2">Manage Desks</Text>
-        <Pressable onPress={() => setShowAdd(true)} style={styles.addBtn} hitSlop={12}>
-          <Ionicons name="add-circle" size={28} color={colors.accent.primary} />
-        </Pressable>
-      </View>
+      <NavHeader
+        title="Manage Desks"
+        onBack={() => router.back()}
+        actionIcon="add"
+        onAction={() => setShowAdd(true)}
+      />
 
       {/* Add desk panel */}
       {showAdd && (
@@ -140,21 +138,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.bg.base,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: spacing.s16,
-    paddingVertical: spacing.s12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.subtle,
-  },
-  backBtn: {
-    padding: spacing.s4,
-  },
-  addBtn: {
-    padding: spacing.s4,
   },
   addPanel: {
     margin: spacing.s16,

@@ -5,6 +5,7 @@ import { format, addDays, isToday, isTomorrow } from "date-fns";
 import { useQueries } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "@/components/ui/Text";
+import { TAB_BAR_CLEARANCE } from "@/components/ui/FloatingTabBar";
 import { api } from "@/lib/apiClient";
 import { useAuthStore } from "@/store";
 import { colors, spacing, radius, rnShadows } from "@team-flow/shared";
@@ -70,28 +71,28 @@ export default function ReservationsScreen() {
           </View>
           {weekStats.map(({ date, booked, total, pct }) => (
             <View key={date} style={styles.weekRow}>
-              <View style={styles.weekDayCol}>
-                <Text variant="bodyStrong" style={styles.weekDay}>
-                  {dayLabel(date)}
-                </Text>
-                <Text variant="micro" color="secondary">
-                  {daySubLabel(date)}
-                </Text>
-              </View>
-              <View style={styles.weekBarCol}>
-                <View style={styles.weekBarBg}>
-                  <View style={[styles.weekBarFill, { width: `${pct}%` as `${number}%` }]} />
+              <View style={styles.weekRowHeader}>
+                <View style={styles.weekDayCol}>
+                  <Text variant="bodyStrong" style={styles.weekDay}>
+                    {dayLabel(date)}
+                  </Text>
+                  <Text variant="micro" color="secondary">
+                    {daySubLabel(date)}
+                  </Text>
                 </View>
+                <Text
+                  variant="micro"
+                  style={[
+                    styles.weekPct,
+                    pct >= 80 ? styles.weekPctHigh : pct > 0 ? styles.weekPctMid : styles.weekPctEmpty,
+                  ]}
+                >
+                  {pct > 0 ? `${pct}% Full` : "0% Full"}
+                </Text>
               </View>
-              <Text
-                variant="micro"
-                style={[
-                  styles.weekPct,
-                  pct >= 80 ? styles.weekPctHigh : pct > 0 ? styles.weekPctMid : styles.weekPctEmpty,
-                ]}
-              >
-                {pct > 0 ? `${pct}% Full` : "0% Full"}
-              </Text>
+              <View style={styles.weekBarBg}>
+                <View style={[styles.weekBarFill, { width: `${pct}%` as `${number}%` }]} />
+              </View>
             </View>
           ))}
         </View>
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
   scroll: {
     padding: spacing.s16,
     gap: spacing.s16,
-    paddingBottom: spacing.s40,
+    paddingBottom: spacing.s40 + TAB_BAR_CLEARANCE,
   },
   // This Week panel
   weekPanel: {
@@ -154,19 +155,21 @@ const styles = StyleSheet.create({
     marginBottom: spacing.s4,
   },
   weekRow: {
+    gap: spacing.s8,
+  },
+  weekRowHeader: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "baseline",
+    justifyContent: "space-between",
     gap: spacing.s12,
   },
   weekDayCol: {
-    width: 90,
-    gap: 2,
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: spacing.s8,
   },
   weekDay: {
     fontSize: 14,
-  },
-  weekBarCol: {
-    flex: 1,
   },
   weekBarBg: {
     height: 6,
@@ -180,9 +183,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
   },
   weekPct: {
-    width: 52,
     textAlign: "right",
-    fontWeight: "500",
+    fontWeight: "600",
   },
   weekPctHigh: {
     color: colors.status.error,

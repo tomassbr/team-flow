@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { Text } from "@/components/ui/Text";
+import { TAB_BAR_CLEARANCE } from "@/components/ui/FloatingTabBar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.s24,
     gap: spacing.s16,
-    paddingBottom: spacing.s40,
+    paddingBottom: spacing.s40 + TAB_BAR_CLEARANCE,
   },
   title: {
     marginBottom: spacing.s8,

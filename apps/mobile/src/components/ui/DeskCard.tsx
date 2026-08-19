@@ -22,13 +22,14 @@ interface DeskCardProps {
   status: DeskStatus;
   user?: string;
   userImage?: string | null;
+  isSelected?: boolean;
   onPress?: () => void;
   style?: ViewStyle;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export function DeskCard({ name, status, user, userImage, onPress, style }: DeskCardProps) {
+export function DeskCard({ name, status, user, userImage, isSelected = false, onPress, style }: DeskCardProps) {
   const scale = useSharedValue(1);
   const isBooked = status === "booked";
 
@@ -56,6 +57,17 @@ export function DeskCard({ name, status, user, userImage, onPress, style }: Desk
             <Text style={styles.badgeTextBooked}>Booked</Text>
           </View>
         )}
+        {!isBooked && isSelected && (
+          <View style={styles.selectedRight}>
+            <View style={styles.badgeSelected}>
+              <View style={styles.badgeDot} />
+              <Text style={styles.badgeTextBooked}>Selected</Text>
+            </View>
+            <View style={styles.checkCircle}>
+              <Ionicons name="checkmark" size={14} color={colors.text.onAccent} />
+            </View>
+          </View>
+        )}
       </View>
 
       {/* Dolní řada */}
@@ -65,7 +77,6 @@ export function DeskCard({ name, status, user, userImage, onPress, style }: Desk
           <Text style={styles.userName} numberOfLines={1}>{user ?? ""}</Text>
         ) : (
           <View style={styles.badgeAvailable}>
-            <View style={styles.availableDot} />
             <Text style={styles.badgeTextAvailable}>Available</Text>
           </View>
         )}
@@ -95,7 +106,7 @@ export function DeskCard({ name, status, user, userImage, onPress, style }: Desk
           {cardContent}
         </LinearGradient>
       ) : (
-        <View style={[styles.card, styles.cardAvailable]}>
+        <View style={[styles.card, styles.cardAvailable, isSelected && styles.cardSelected]}>
           {cardContent}
         </View>
       )}
@@ -120,6 +131,42 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(199,210,254,0.4)",
     ...rnShadows.e2,
+  },
+  cardSelected: {
+    borderWidth: 2,
+    borderColor: colors.accent.primary,
+    shadowColor: colors.accent.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  selectedRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.s8,
+  },
+  badgeSelected: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radius.full,
+    backgroundColor: colors.accent.primaryBg,
+  },
+  checkCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: radius.full,
+    backgroundColor: colors.accent.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: colors.accent.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 4,
   },
   topRow: {
     flexDirection: "row",
@@ -187,12 +234,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(236,253,245,0.8)",
     borderWidth: 1,
     borderColor: "rgba(167,243,208,0.5)",
-  },
-  availableDot: {
-    width: 6,
-    height: 6,
-    borderRadius: radius.full,
-    backgroundColor: "#34D399",
   },
   badgeTextAvailable: {
     fontSize: 12,

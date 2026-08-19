@@ -21,6 +21,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { DateStrip } from "@/components/dashboard/DateStrip";
 import { MiniCalendar } from "@/components/ui/MiniCalendar";
+import { TAB_BAR_CLEARANCE } from "@/components/ui/FloatingTabBar";
 import { useReservationsQuery } from "@/features/reservations/useReservationsQuery";
 import { useCreateReservation } from "@/features/reservations/useCreateReservation";
 import { useCreateDesk } from "@/features/desks/useDesksQuery";
@@ -244,6 +245,7 @@ export default function DashboardScreen() {
                   status={item.status}
                   user={"user" in item ? item.user : undefined}
                   userImage={"userImage" in item ? (item.userImage ?? undefined) : undefined}
+                  isSelected={bookingDesk?.id === item.id}
                   style={styles.card}
                   onPress={
                     item.status === "available"
@@ -634,7 +636,7 @@ const styles = StyleSheet.create({
   grid: {
     padding: spacing.s16,
     gap: spacing.s12,
-    paddingBottom: spacing.s32,
+    paddingBottom: spacing.s32 + TAB_BAR_CLEARANCE,
     flexGrow: 1,
   },
   row: { gap: spacing.s12 },

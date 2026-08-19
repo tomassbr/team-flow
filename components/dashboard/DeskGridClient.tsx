@@ -241,6 +241,7 @@ export function DeskGridClient({
                 user={desk.user}
                 duration={desk.duration}
                 isOwn={isOwn}
+                isSelected={drawerDesk?.id === desk.id}
                 onClick={desk.status === "available" ? () => handleDeskClick(desk) : undefined}
                 onCancel={isOwn ? () => handleCancelReservation(desk) : undefined}
               />
